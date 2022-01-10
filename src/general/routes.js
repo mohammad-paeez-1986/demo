@@ -28,6 +28,7 @@ import ShowCalendar from "components/users/reservation/ShowCalendar";
 
 // operator
 import TodayReservations from 'components/operators/TodayReservations';
+import ShowReservationReportForOperator from 'components/operators/ShowReservationReportForOperator';
 
 const routes = [
     {
@@ -166,6 +167,11 @@ const routes = [
         path: "/gettodayreservation",
         exact: true,
         component: TodayReservations,
+    },
+    {
+        path: "/getReservationReportForOperatot",
+        exact: true,
+        component: ShowReservationReportForOperator,
     },
     // 404
     {

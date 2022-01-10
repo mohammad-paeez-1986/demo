@@ -1,32 +1,38 @@
 import React, { useState, useEffect } from "react";
-import {
-    Card,
-    Table,
-    Button,
-    Switch,
-    Divider,
-} from "antd";
+import { Card, Table, Button, Switch, Divider } from "antd";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { FormOutlined, FilterOutlined } from "@ant-design/icons";
 import FilterUser from "./FilterUser";
 import notify from "general/notify";
-
+import { usePaginate } from "hooks/usePaginate";
 
 const ShowUser = ({ history }) => {
     const [userList, setUserList] = useState([]);
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [filter, setFilter] = useState({});
     const [filterVisibility, setFilterVisibility] = useState("hide");
     const [filterActiveClass, setFilterActiveClass] = useState(null);
 
+    const {
+        pageIndex,
+        setPageIndex,
+        pageSize,
+        setPageSize,
+        total,
+        setTotal,
+        paginationData,
+    } = usePaginate();
+
     useEffect(() => {
-        axios.post("User/List", filter).then((res) => {
+        setLoading(true);
+        axios.post("User/List", { pageIndex, pageSize, ...filter }).then((res) => {
             const { data } = res;
+            setTotal(res.totalrecords);
             setUserList(data);
             setLoading(false);
         });
-    }, [filter]);
+    }, [filter, pageIndex, pageSize]);
 
     // change user activity
     const onActivityChange = (row, checked, e) => {
@@ -71,12 +77,11 @@ const ShowUser = ({ history }) => {
         let text = rolenamefa;
 
         if (roleId === 2) {
-            text += ` (${welfareName})`
+            text += ` (${welfareName})`;
         }
 
         return text;
-    }
-    
+    };
 
     // columns of table, and values
     const columns = [
@@ -88,7 +93,8 @@ const ShowUser = ({ history }) => {
         {
             title: "نقش",
             key: "rolenamefa",
-            render:({roleId, rolenamefa, welfareName}) => getRoleText(roleId, rolenamefa, welfareName)
+            render: ({ roleId, rolenamefa, welfareName }) =>
+                getRoleText(roleId, rolenamefa, welfareName),
         },
         {
             title: "دپارتمان",
@@ -126,10 +132,9 @@ const ShowUser = ({ history }) => {
             key: "personelcode",
         },
         {
-            title: "کد ملی",
-            dataIndex: "nationalCode",
-            key: "nationalCode",
-            editable: true,
+            title: "نام کاربری",
+            dataIndex: "username",
+            key: "username",
         },
         {
             title: "فعال",
@@ -189,18 +194,17 @@ const ShowUser = ({ history }) => {
                 ]}
             >
                 <FilterUser
+                    filter={filter}
                     setFilter={setFilter}
                     filterVisibility={filterVisibility}
                 />
                 <Table
                     bordered
                     columns={columns}
-                    pagination={{
-                        hideOnSinglePage: true,
-                    }}
+                    pagination={paginationData}
                     dataSource={userList}
-                    loading={loading}
                     scroll={{ x: true }}
+                    loading={loading}
                 />
             </Card>
         </div>

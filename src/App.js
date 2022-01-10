@@ -11,12 +11,11 @@ import ReactNotofication from "react-notifications-component";
 import "./App.css";
 import "animate.css/animate.css";
 import "react-notifications-component/dist/theme.css";
-// import notify from "./general/notify";
 
 axios.interceptors.response.use(
     (res) => {
-        const { data, message } = res.data.result;
-        return { data, message };
+        const { data, message, totalrecords } = res.data.result;
+        return { data, message, totalrecords };
     },
     (error) => {
         if (!error.response) {

@@ -38,6 +38,7 @@ const AddDailyProgram = ({ match }) => {
     const [copyButtonDisabled, setCopyButtonDisabled] = useState(true);
     const [doCopyButtonVisible, setDoCopyButtonVisible] = useState("hide");
     const [isSelectingDays, setIsSelectingDays] = useState(false);
+    const [holidaysList, setHolidaysList] = useState([]);
     const { url } = match;
 
     const resetCopyBox = () => {
@@ -48,6 +49,7 @@ const AddDailyProgram = ({ match }) => {
         setCopyButtonDisabled(true);
         setIsSelectingDays(false);
         setSelectedDayProgramList([]);
+        setHolidaysList([]);
     };
 
     useEffect(() => {
@@ -57,6 +59,13 @@ const AddDailyProgram = ({ match }) => {
             // console.log(data);
             setWelfareId(data[0].id);
         });
+
+        axios
+            .post("Calendar/Get", { shamsiDate: "0", description: "all" })
+            .then(({ data }) => {
+                const holidaysList = data.map((item) => item.shamsiDate);
+                setHolidaysList(holidaysList);
+            });
     }, [url]);
 
     const onDayChange = (date, isObject = false) => {
@@ -225,6 +234,23 @@ const AddDailyProgram = ({ match }) => {
                                 onChange={onDayChange}
                                 value={date}
                                 format={"YYYY/MM/DD"}
+                                mapDays={({ date }) => {
+                                    let props = {};
+
+                                    if (
+                                        holidaysList.includes(
+                                            getDateFromObject(date)
+                                        )
+                                    )
+                                        return {
+                                            disabled: true,
+                                            style: { color: "#f30" },
+                                            onClick: () =>
+                                                notify.error(
+                                                    "این روز تعطیل می  باشد"
+                                                ),
+                                        };
+                                }}
                             />
                         </div>
                         <br />

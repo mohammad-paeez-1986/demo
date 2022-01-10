@@ -1,19 +1,15 @@
 import React, { useState } from "react";
-import {
-    Button,
-    Form,
-    Select,
-    Input,
-} from "antd";
+import { Button, Form, Select, Input, Space } from "antd";
 import axios from "axios";
 const { Option } = Select;
 
-const FilterUser = ({setFilter, filterVisibility}) => {
+const FilterUser = ({ setFilter, filterVisibility }) => {
     const [filterTypeName, setFilterTypeName] = useState("");
     const [rolesList, setRolesList] = useState([]);
     const [filterValueInput, setFilterValueInput] = useState(
         <Input disabled />
     );
+    const [form] = Form.useForm();
 
     // get filter value input, if type is role
     const getRolesInput = async () => {
@@ -60,6 +56,12 @@ const FilterUser = ({setFilter, filterVisibility}) => {
                     <Input placeholder="کد کارمندی را وارد کنید" />
                 );
                 break;
+            case "nameFa":
+                filterValueInput = <Input placeholder="نام را وارد کنید" />;
+                break;
+            case "nationalCode":
+                filterValueInput = <Input placeholder="کد ملی را وارد کنید" />;
+                break;
         }
 
         setFilterTypeName(val);
@@ -69,10 +71,13 @@ const FilterUser = ({setFilter, filterVisibility}) => {
     // make object of filter
     const makeFilterObject = (values) => {
         let obj = {};
-
         obj[values.type] = values[Object.keys(values)[1]];
+        setFilter(obj);
+    };
 
-        setFilter(obj)
+    const removeFilter = () => {
+        setFilter({});
+        form.resetFields();
     };
 
     return (
@@ -82,23 +87,26 @@ const FilterUser = ({setFilter, filterVisibility}) => {
                 wrapperCol={{ lg: 9, sm: 16 }}
                 labelCol={{ lg: 4, md: 7, sm: 7 }}
                 className="mini-form"
+                form={form}
             >
                 <Form.Item
                     name="type"
-                    // rules={[{ required: true }]}
+                    rules={[{ required: true }]}
                     label="انتخاب نوع فیلتر"
                 >
                     <Select onChange={(val) => onFilterTypeChange(val)}>
                         <Option value="userRole">نقش</Option>
                         <Option value="username">نام کاربری</Option>
                         <Option value="personelcode">کد کارمندی</Option>
+                        <Option value="nameFa">نام</Option>
+                        <Option value="nationalCode">کد ملی</Option>
                     </Select>
                 </Form.Item>
                 <Form.Item
                     name={filterTypeName}
                     label="تعیین مقدار فیلتر"
-                    // rules={[{ required: true }]}
-                    className="input-max-widt"
+                    rules={[{ required: true }]}
+                    style={{marginTop:9}}
                 >
                     {filterValueInput}
                 </Form.Item>
@@ -110,9 +118,17 @@ const FilterUser = ({setFilter, filterVisibility}) => {
                         sm: { offset: 7 },
                     }}
                 >
+                <Space style={{marginTop:5}}>
                     <Button type="primary" htmlType="submit">
                         اعمال فیلتر
                     </Button>
+                    <Button
+                        type="default"
+                        onClick={removeFilter}
+                    >
+                        حذف فیلتر
+                    </Button>
+                    </Space>
                 </Form.Item>
             </Form>
         </div>

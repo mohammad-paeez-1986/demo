@@ -14,7 +14,7 @@ const weekDays = ["ش", "ی", "د", "س", "چ", "پ", "ج"];
 
 const { Option } = Select;
 
-const ShowReservationReport = () => {
+const ShowReservationReportForOperator = () => {
     const [filterPartloading, setFilterPartloading] = useState(true);
     const [tableLoading, setTableLoading] = useState(false);
     const [welfareList, setWelfareList] = useState([]);
@@ -36,6 +36,16 @@ const ShowReservationReport = () => {
                 setFilterPartloading(false);
             });
     }, []);
+
+    const {
+        pageIndex,
+        setPageIndex,
+        pageSize,
+        setPageSize,
+        total,
+        setTotal,
+        paginationData,
+    } = usePaginate(form.submit);
 
     const columns = [
         {
@@ -83,16 +93,6 @@ const ShowReservationReport = () => {
         },
     ];
 
-    const {
-        pageIndex,
-        setPageIndex,
-        pageSize,
-        setPageSize,
-        total,
-        setTotal,
-        paginationData,
-    } = usePaginate(form.submit);
-
     const onFinish = (values) => {
         values.dateFrom = getDateFromObject(values.dateFrom);
 
@@ -103,7 +103,6 @@ const ShowReservationReport = () => {
         setFormOutput(values);
 
         setTableLoading(true);
-
         axios
             .post("Report/Reservation", values)
             .then(({ data }) => {
@@ -117,19 +116,24 @@ const ShowReservationReport = () => {
     };
 
     const downloadReport = () => {
-        const instance = axios.create({
-            headers: {
-                "Content-Disposition": "attachment; filename=template.xlsx",
-                "Content-Type": "application/json",
-            },
-            responseType: "arraybuffer",
-        });
+        // axios
+        //     .post("Report/ReservationAggregate", formOutput)
+        //     .then(({ data }) => {})
+        //     .catch((errorMessage) => notify.error(errorMessage));
 
-        instance
-            .post("Report/ReservationExcel", formOutput)
+        axios
+            .post("Report/ReservationExcel", formOutput, {
+                headers: {
+                    "Content-Disposition": "attachment; filename=template.xlsx",
+                    "Content-Type":
+                        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                },
+                responseType: "arraybuffer",
+            })
             .then((response) => {
-                const url = window.URL.createObjectURL(new Blob([response]));
-                console.log(url);
+                const url = window.URL.createObjectURL(
+                    new Blob([response.data])
+                );
                 const link = document.createElement("a");
                 link.href = url;
                 link.setAttribute("download", "template.xlsx");
@@ -184,17 +188,6 @@ const ShowReservationReport = () => {
                             </Col>
 
                             <Col lg={8} md={12} xs={24}>
-                                <Form.Item name="welfareId" label="بخش">
-                                    <Select>
-                                        <Option value={0}>همه</Option>
-                                        {welfareList.map(({ id, typename }) => (
-                                            <Option value={id}>
-                                                {typename}
-                                            </Option>
-                                        ))}
-                                    </Select>
-                                </Form.Item>
-
                                 <Form.Item
                                     name="presenceStatus"
                                     label="وضعیت"
@@ -217,8 +210,6 @@ const ShowReservationReport = () => {
                                         </Option>
                                     </Select>
                                 </Form.Item>
-                            </Col>
-                            <Col lg={{ span: 8, offset: 1 }} md={12} xs={24}>
                                 <Form.Item name="workgroupId" label="کارگروه">
                                     <Select>
                                         <Option value={0}>همه</Option>
@@ -227,6 +218,8 @@ const ShowReservationReport = () => {
                                         ))}
                                     </Select>
                                 </Form.Item>
+                            </Col>
+                            <Col lg={{ span: 8, offset: 1 }} md={12} xs={24}>
                                 <Form.Item
                                     wrapperCol={{
                                         lg: { span: 19, offset: 5 },
@@ -271,4 +264,4 @@ const ShowReservationReport = () => {
     );
 };
 
-export default ShowReservationReport;
+export default ShowReservationReportForOperator;

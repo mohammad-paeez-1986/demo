@@ -23,7 +23,7 @@ const SetDelayMinutes = ({
                 labelCol={{ xs: 11, sm: 10, md: 8, lg: 8, xlg: 5 }}
                 wrapperCol={{ xs: 12, md: 12, lg: 10, xlg: 5 }}
                 onFinish={onFinish}
-                scrollToFrstError={true}
+                scrollToFirstError={true}
                 initialValues={{
                     delayMinutes: null,
                 }}

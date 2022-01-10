@@ -149,7 +149,7 @@ h1 {
     direction: ltr;
     text-align: right;
 }
-.ltr-left{
+.ltr-left {
     direction: ltr;
     text-align-last: left;
 }
@@ -169,6 +169,9 @@ h1 {
     }
 }
 /* Global */
+p{
+    text-align: justify;
+}
 .sm-font {
     font-size: 12px !important;
 }
@@ -185,7 +188,7 @@ h1 {
     cursor: pointer;
     font-size: 14px;
 }
-.float-left{
+.float-left {
     float: left;
 }
 .act-icon span {
@@ -211,6 +214,21 @@ h1 {
 }
 .show {
     display: block;
+}
+.dashboard-admin{
+    background-image: url(./images/admin.svg);
+    background-repeat: no-repeat;
+    background-size: 200px;
+    background-position: center 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+.dashboard-admin h2{
+    text-align: center;
+    font-size: 15px;
+    color: #1b919e;
 }
 .form-part-title {
     margin: -34px -41px 30px;
@@ -434,6 +452,7 @@ td {
 }
 .ant-list-item-meta-description {
     font-size: 13px;
+    text-align: justify;
 }
 .ant-list-item-action {
     /* float: left; */
@@ -525,8 +544,10 @@ div.list-switch-container button {
 }
 #large-calendar .rmdp-day span {
     font-size: 17px;
-    color: #333;
     padding-left: 0.5px;
+}
+.rmdp-day span {
+    color: #333;
 }
 #large-calendar .rmdp-week,
 .rmdp-ym {
@@ -561,8 +582,12 @@ div.list-switch-container button {
 }
 /* PAGINATION */
 .ant-table-wrapper.ant-table-wrapper-rtl .ant-table-pagination-left {
-    justify-content: flex-end !important;
-    float: right;
+    /* justify-content: flex-end !important;
+    float: right; */
+    display: block;
+}
+.ant-pagination-options{
+    float: left;
 }
 /* DIVIDER */
 .small-divider {
@@ -736,7 +761,7 @@ ul.copy-days-box li:nth-child(1) {
     font-size: 12px !important;
     color: #556;
 }
-.ant-alert-with-description .ant-alert-message{
-    color:#115d63;
+.ant-alert-with-description .ant-alert-message {
+    color: #115d63;
     font-size: 14px;
 }

@@ -20,7 +20,7 @@ const Dashboard = () => {
                 } else if (rolenameen === "ADMIN") {
                     setDashboardComponent(<AdminDashboard />);
                 } else if (rolenameen === "OPERATOR") {
-                    setDashboardComponent(<OperatorDashboard />);
+                    setDashboardComponent(<AdminDashboard />);
                 }
                 setLoading(false)
             })

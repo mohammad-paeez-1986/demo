@@ -1,14 +1,10 @@
-import React, { useState, useEffect } from "react";
-import {
-    Card,
-    Table,
-    Select,
-    Modal
-} from "antd";
-import { Link } from "react-router-dom";
-import axios from "axios";
-import notify from "general/notify";
+import React, { useState, useEffect } from 'react';
+import { Card, Table, Select, Modal } from 'antd';
+import { Link } from 'react-router-dom';
+import axios from 'axios';
+import notify from 'general/notify';
 import SetDelayMinutes from 'components/common/reservation/SetDelayMinutes';
+import { usePaginate } from 'hooks/usePaginate';
 
 const { Option } = Select;
 
@@ -18,25 +14,93 @@ const NextDayReservations = ({ match }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [selectedReservationId, setSelectedReservationId] = useState(null);
     const { url } = match;
+    const [welfareId, setWelfareId] = useState(null);
+
+    const {
+        pageIndex,
+        setPageIndex,
+        pageSize,
+        setPageSize,
+        total,
+        setTotal,
+        paginationData,
+    } = usePaginate();
 
     useEffect(() => {
-        const type = url.split("/")[1]?.toUpperCase();
-        // get welfareId by url
-        axios.post("Welfare/Get", { type }).then(({ data }) => {
-            const welfareId = data[0].id;
+        const type = url.split('/')[1]?.toUpperCase();
 
-            // get reservable days of week
-            axios
-                .post("Reservation/GetReservationNextDay", {
-                    welfareId,
-                })
-                .then(({ data }) => {
-                    setNextDayReservationList(data);
-                    setLoading(false);
-                })
-                .catch((errorMessage) => notify.error(errorMessage));
-        });
+        axios
+            .post('Welfare/Get', { type })
+            .then(({ data }) => {
+                setWelfareId(data[0].id);
+                const welfareId = data[0].id;
+            })
+            .catch((errorMessage) => notify.error(errorMessage));
     }, [url]);
+
+    useEffect(() => {
+        if (!welfareId) return;
+        axios
+            .post('Reservation/GetReservationNextDay', {
+                welfareId,
+            })
+            .then((res) => {
+                const { data } = res;
+                setNextDayReservationList(data);
+                if (total === 0) {
+                    setTotal(res.totalrecords);
+                }
+
+                setLoading(false);
+            })
+            .catch((errorMessage) => notify.error(errorMessage));
+
+        // const type = url.split("/")[1]?.toUpperCase();
+        // setWelfareId(null);
+        // // get welfareId by url
+        // axios.post("Welfare/Get", { type }).then(({ data }) => {
+        //     const welfareId = data[0].id;
+        //     // get reservable days of week
+        //     axios
+        //         .post("Reservation/GetReservationNextDay", {
+        //             welfareId,
+        //         })
+        //         .then((res) => {
+        //             const { data } = res;
+        //             setNextDayReservationList(data);
+        //             if (total === 0) {
+        //                 setTotal(res.totalrecords);
+        //             }
+        //             setLoading(false);
+        //         })
+        //         .catch((errorMessage) => notify.error(errorMessage));
+        // });
+        // try {
+        //     let welfareIdToSend;
+        //     if (!welfareId) {
+        //         let welfareData = await axios.post("Welfare/Get", { type });
+        //         welfareIdToSend = welfareData?.data[0].id;
+        //         setWelfareId(welfareIdToSend);
+        //     } else {
+        //         welfareIdToSend = welfareId;
+        //     }
+        //     axios
+        //         .post("Reservation/GetReservationNextDay", {
+        //             welfareId: welfareIdToSend,
+        //         })
+        //         .then((res) => {
+        //             const { data } = res;
+        //             setNextDayReservationList(data);
+        //             if (total === 0) {
+        //                 setTotal(res.totalrecords);
+        //             }
+        //             setLoading(false);
+        //         })
+        //         .catch((errorMessage) => notify.error(errorMessage));
+        // } catch (error) {
+        //     console.log(error);
+        // }
+    }, [welfareId, pageSize, pageIndex]);
 
     // const getReservationStatus = () => {
     //     let statusText;
@@ -71,13 +135,17 @@ const NextDayReservations = ({ match }) => {
         delayMinutes = false
     ) => {
         if (status !== 2 || delayMinutes) {
+            let values = {
+                reservationId,
+                status,
+                revokeReason: '',
+                delayMinutes,
+            };
+
+            delete values.delayMinutes;
+
             axios
-                .post("Reservation/ChangeStatus", {
-                    reservationId,
-                    status,
-                    revokeReason: "",
-                    delayMinutes,
-                })
+                .post('Reservation/ChangeStatus', values)
                 .then(({ message }) => {
                     notify.success(message);
                     const newNextDayReservationList =
@@ -104,34 +172,34 @@ const NextDayReservations = ({ match }) => {
     // columns of table, and values
     const columns = [
         {
-            title: "نام",
-            dataIndex: "namefa",
-            key: "namefa",
+            title: 'نام',
+            dataIndex: 'namefa',
+            key: 'namefa',
         },
 
         {
-            title: "کد کارمندی",
-            dataIndex: "personelCode",
-            key: "personelCode",
+            title: 'کد کارمندی',
+            dataIndex: 'personelCode',
+            key: 'personelCode',
         },
         {
-            title: "تاریخ",
-            dataIndex: "reservationDate",
-            key: "reservationDate",
+            title: 'تاریخ',
+            dataIndex: 'reservationDate',
+            key: 'reservationDate',
         },
         {
-            title: "زمان برنامه",
-            dataIndex: "dailyProgramShamsiDate",
-            key: "dailyProgramShamsiDate",
+            title: 'زمان برنامه',
+            dataIndex: 'dailyProgramShamsiDate',
+            key: 'dailyProgramShamsiDate',
         },
         {
-            title: "زمان سانس",
-            key: "reservationId",
+            title: 'زمان سانس',
+            key: 'reservationId',
             render: ({ startTime, endTime }) => `${endTime} - ${startTime}`,
         },
 
         {
-            title: "وضعیت",
+            title: 'وضعیت',
             render: ({ presenceStatus, reservationId }) => {
                 return (
                     <Select
@@ -140,6 +208,7 @@ const NextDayReservations = ({ match }) => {
                         onChange={(value) =>
                             onReservationStatusChange(value, reservationId)
                         }
+                        disabled={presenceStatus === 7}
                     >
                         <Option value={0}>در مرحله تائید رزرو</Option>
                         <Option value={1}>تائید رزرو</Option>
@@ -181,9 +250,7 @@ const NextDayReservations = ({ match }) => {
                 <Table
                     bordered
                     columns={columns}
-                    pagination={{
-                        hideOnSinglePage: true,
-                    }}
+                    pagination={paginationData}
                     dataSource={nextDayReservationList}
                     loading={loading}
                     scroll={{ x: true }}

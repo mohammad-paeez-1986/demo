@@ -19,7 +19,8 @@ import persian from "react-date-object/calendars/persian";
 import persian_fa from "react-date-object/locales/persian_fa";
 import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
 import { getDateFromObject } from "general/Helper";
-import SetDelayMinutes from 'components/common/reservation/SetDelayMinutes';
+import SetDelayMinutes from "components/common/reservation/SetDelayMinutes";
+import { usePaginate } from "hooks/usePaginate";
 
 const { Option } = Select;
 
@@ -43,16 +44,30 @@ const ShowReservationHistory = ({ match }) => {
 
         setLoading(true);
         axios
-            .post("/User/GetUserHistory", values)
-            .then(({ data }) => {
+            .post("/User/GetUserHistory", { pageIndex, pageSize, ...values })
+            .then((res) => {
+                const { data } = res;
                 setHistoryList(data);
                 if (isFirstRequestSent === false) {
                     setIsFirstRequestSent(true);
+                }
+                if (total === 0) {
+                    setTotal(res.totalrecords);
                 }
             })
             .catch((errorMessage) => notify.error(errorMessage))
             .then(() => setLoading(false));
     };
+
+    const {
+        pageIndex,
+        setPageIndex,
+        pageSize,
+        setPageSize,
+        total,
+        setTotal,
+        paginationData,
+    } = usePaginate(form.submit);
 
     useEffect(() => {
         setHistoryList([]);
@@ -100,14 +115,13 @@ const ShowReservationHistory = ({ match }) => {
                 })
                 .then(({ message }) => {
                     notify.success(message);
-                    const newHistoryList =
-                        historyList.map((item) => {
-                            if (item.reservationId === reservationId) {
-                                return { ...item, presenceStatus: status };
-                            } else {
-                                return item;
-                            }
-                        });
+                    const newHistoryList = historyList.map((item) => {
+                        if (item.reservationId === reservationId) {
+                            return { ...item, presenceStatus: status };
+                        } else {
+                            return item;
+                        }
+                    });
                     setHistoryList(newHistoryList);
 
                     if (isModalVisible) {
@@ -169,14 +183,19 @@ const ShowReservationHistory = ({ match }) => {
                         onChange={(id) =>
                             onReservationStatusChange(id, reservationId)
                         }
+                        disabled={presenceStatus === 7}
                     >
                         <Option value={0}>در مرحله تائید رزرو</Option>
                         <Option value={1}>تائید رزرو</Option>
                         <Option value={2}>حضور</Option>
                         <Option value={3}>غیبت</Option>
-                        <Option value={7} disabled>لغو توسط کاربر</Option>
+                        <Option value={7} disabled>
+                            لغو توسط کاربر
+                        </Option>
                         <Option value={8}>رد درخواست</Option>
-                        <Option value={9} disabled>لغو توسط سیستم</Option>
+                        <Option value={9} disabled>
+                            لغو توسط سیستم
+                        </Option>
                     </Select>
                 );
             },
@@ -258,9 +277,7 @@ const ShowReservationHistory = ({ match }) => {
                     <Table
                         bordered
                         columns={columns}
-                        pagination={{
-                            hideOnSinglePage: true,
-                        }}
+                        pagination={paginationData}
                         dataSource={historyList}
                         loading={loading}
                         scroll={{ x: true }}

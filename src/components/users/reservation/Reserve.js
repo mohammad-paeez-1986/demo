@@ -51,7 +51,7 @@ const Reserve = ({ match, history }) => {
 
         form.resetFields();
         const type = url.split("/")[1]?.toUpperCase();
-        
+
         // get welfareId by url
         axios.post("Welfare/Get", { type }).then(({ data }) => {
             const welfareId = data[0].id;
@@ -113,11 +113,29 @@ const Reserve = ({ match, history }) => {
             .then(() => setTimesLoading(false));
     }
 
+    // const onClusterChange = (e) => {
+    //     const selectedTime = e.target.value;
+    //     alert(selectedTime);
+    //     // const capacity = clusterList.find()
+    //     setFinalStep(true);
+    //     setSelectedTime(selectedTime);
+    //     // setSubmitButtonDisabled(false);
+    // };
+
     const onClusterChange = (e) => {
-        const selectedTime = e.target.value;
+        if (welfareId === 2) {
+            const selectedClusterId = e.target.value;
+            const selectedItem =
+                clusterList.find(
+                    (item) => item?.welfareclusterId === selectedClusterId
+                );
+
+            setCompanionCountList([
+                ...Array(parseInt(selectedItem?.clusterCapacity)).keys(),
+            ]);
+        }
+
         setFinalStep(true);
-        setSelectedTime(selectedTime);
-        // setSubmitButtonDisabled(false);
     };
 
     const onTimeChange = (e) => {
@@ -125,10 +143,10 @@ const Reserve = ({ match, history }) => {
         setSelectedTime(selectedTime);
 
         setClusterLoading(true);
-        if (welfareId == 2 || welfareId == 4) {
-            setCompanionCountList(
-                welfareId === 2 ? [1, 2, 3, 4, 5, 6, 7, 8] : [0, 1, 2]
-            );
+        if (welfareId === 4 || welfareId === 2) {
+            if (welfareId === 4) {
+                setCompanionCountList([0, 1, 2]);
+            }
             // get scences
             axios
                 .post("WelfareCluster/Get", {
@@ -197,7 +215,7 @@ const Reserve = ({ match, history }) => {
                             size="small"
                             onClick={() => setIsModalVisible(true)}
                         >
-                            مشاهده آلبوم
+                            مشاهده منو و آلبوم
                         </Button>
                     ),
                 ]}
@@ -450,7 +468,7 @@ const Reserve = ({ match, history }) => {
                 </Form>
             </Card>
             <Modal
-                title="مشاهده آلبوم"
+                title="مشاهده منو و آلبوم"
                 visible={isModalVisible}
                 footer={null}
                 onCancel={closeModal}
