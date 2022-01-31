@@ -12,28 +12,28 @@ const Login = () => {
     const [captcha, setCaptcha] = useState(null);
 
     // get captcha
-    const getCaptcha = () => {
-        setLoading(true);
-        const instance = axios.create({
-            responseType: 'arraybuffer',
-        });
-        instance
-            .get('User/ReCaptcha')
-            .then((res) => {
-                // https://stackoverflow.com/a/52154751/9600858
-                let blob = new Blob([res.data], {
-                    type: res.headers['content-type'],
-                });
-                let image = URL.createObjectURL(blob);
-                setCaptcha(image);
-            })
-            .catch((errorMessage) => notify.error(errorMessage))
-            .then(() => setLoading(false));
-    };
+    // const getCaptcha = () => {
+    //     setLoading(true);
+    //     const instance = axios.create({
+    //         responseType: 'arraybuffer',
+    //     });
+    //     instance
+    //         .get('User/ReCaptcha')
+    //         .then((res) => {
+    //             // https://stackoverflow.com/a/52154751/9600858
+    //             let blob = new Blob([res.data], {
+    //                 type: res.headers['content-type'],
+    //             });
+    //             let image = URL.createObjectURL(blob);
+    //             setCaptcha(image);
+    //         })
+    //         .catch((errorMessage) => notify.error(errorMessage))
+    //         .then(() => setLoading(false));
+    // };
 
-    useEffect(() => {
-        getCaptcha();
-    }, []);
+    // useEffect(() => {
+    //     getCaptcha();
+    // }, []);
 
     const onFinish = (values) => {
         setLoading(true);
@@ -89,7 +89,7 @@ const Login = () => {
                                     >
                                         <Input.Password className="ltr" />
                                     </Form.Item>
-                                    <Col xs={{ span: 24, offset: 0 }} sm={{ span: 16, offset: 8 }} md={{ span: 18, offset: 7 }} lg={{ span: 18, offset: 6 }}>
+                                    {/* <Col xs={{ span: 24, offset: 0 }} sm={{ span: 16, offset: 8 }} md={{ span: 18, offset: 7 }} lg={{ span: 18, offset: 6 }}>
                                         <div className="captcha-wrapper">
                                             <img src={captcha} />
                                             <span
@@ -112,7 +112,7 @@ const Login = () => {
                                         />
                                     </Form.Item>
 
-                                    <br />
+                                    <br /> */}
                                     <center>
                                         <Form.Item>
                                             <Button
