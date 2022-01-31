@@ -43,7 +43,7 @@ const Menus = ({ history }) => {
                         >
                             {item.childs.map((child) => {
                                 const url = getLink(
-                                    parentURL,
+                                    child.moduleNameEn,
                                     child.actionNameEn
                                 );
                                 return (

@@ -109,6 +109,7 @@ const routes = [
         component: Images,
     },
     {
+        
         path: "/signout",
         exact: true,
         component: SignOut,
@@ -165,7 +166,7 @@ const routes = [
     },
     // operator
     {
-        path: "/gettodayreservation",
+        path: "/operator/gettodayreservation",
         exact: true,
         component: TodayReservations,
     },
