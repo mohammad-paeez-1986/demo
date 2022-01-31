@@ -15,8 +15,8 @@ const AddDailyProgramModal = ({
     welfareId,
 }) => {
     const [welfareClusterList, setWelfareClusterList] = useState([]);
-    // const [clusterName, setClusterName] = useState(null);
     const [loading, setLoading] = useState(true);
+    // const [clusterName, setClusterName] = useState(null);
 
     // useEffect(() => {
     // if (welfareId === 2) {

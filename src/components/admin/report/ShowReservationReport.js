@@ -1,16 +1,16 @@
-import React, { useState, useEffect } from "react";
-import { Row, Card, Col, Form, Input, Spin, Button, Table, Select } from "antd";
-import notify from "general/notify";
-import axios from "axios";
-import DatePicker from "react-multi-date-picker";
-import TimePicker from "react-multi-date-picker/plugins/time_picker";
-import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa";
-import { getDateFromObject } from "general/Helper";
-import { CloseOutlined, CheckOutlined } from "@ant-design/icons";
-import { usePaginate } from "hooks/usePaginate";
+import React, { useState, useEffect } from 'react';
+import { Row, Card, Col, Form, Input, Spin, Button, Table, Select } from 'antd';
+import notify from 'general/notify';
+import axios from 'axios';
+import DatePicker from 'react-multi-date-picker';
+import TimePicker from 'react-multi-date-picker/plugins/time_picker';
+import persian from 'react-date-object/calendars/persian';
+import persian_fa from 'react-date-object/locales/persian_fa';
+import { getDateFromObject } from 'general/Helper';
+import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
+import { usePaginate } from 'hooks/usePaginate';
 
-const weekDays = ["ش", "ی", "د", "س", "چ", "پ", "ج"];
+const weekDays = ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج'];
 
 const { Option } = Select;
 
@@ -27,8 +27,8 @@ const ShowReservationReport = () => {
     useEffect(() => {
         axios
             .all([
-                axios.post("Welfare/Get", { type: null }),
-                axios.post("Workgroup/Get"),
+                axios.post('Welfare/Get', { type: null }),
+                axios.post('Workgroup/Get'),
             ])
             .then((res) => {
                 setWelfareList(res[0].data);
@@ -39,41 +39,41 @@ const ShowReservationReport = () => {
 
     const columns = [
         {
-            title: "نام",
-            dataIndex: "namefa",
-            key: "namefa",
+            title: 'نام',
+            dataIndex: 'namefa',
+            key: 'namefa',
         },
 
         {
-            title: "کد کارمندی",
-            dataIndex: "personelCode",
-            key: "personelCode",
+            title: 'کد کارمندی',
+            dataIndex: 'personelCode',
+            key: 'personelCode',
         },
         {
-            title: "بخش",
-            dataIndex: "welfarenamefa",
-            key: "welfarenamefa",
+            title: 'بخش',
+            dataIndex: 'welfarenamefa',
+            key: 'welfarenamefa',
         },
         {
-            title: "تاریخ",
-            dataIndex: "dailyProgramShamsiDate",
-            key: "dailyProgramShamsiDate",
+            title: 'تاریخ',
+            dataIndex: 'dailyProgramShamsiDate',
+            key: 'dailyProgramShamsiDate',
         },
         {
-            title: "زمان سانس",
-            key: "startTime",
+            title: 'زمان سانس',
+            key: 'startTime',
             render: ({ startTime, endTime }) => `${endTime} - ${startTime}`,
         },
         {
-            title: "وضعیت",
-            dataIndex: "statusReserve",
-            key: "statusReserve",
+            title: 'وضعیت',
+            dataIndex: 'statusReserve',
+            key: 'statusReserve',
         },
 
         {
-            title: "وی آی پی",
-            key: "isVip",
-            className: "edit",
+            title: 'وی آی پی',
+            key: 'isVip',
+            className: 'edit',
             render: (record) =>
                 record.isVip ? (
                     <CheckOutlined className="green" />
@@ -105,7 +105,7 @@ const ShowReservationReport = () => {
         setTableLoading(true);
 
         axios
-            .post("Report/Reservation", values)
+            .post('Report/Reservation', values)
             .then(({ data }) => {
                 setReservationList(data);
                 if (isFirstRequestSent === false) {
@@ -117,22 +117,40 @@ const ShowReservationReport = () => {
     };
 
     const downloadReport = () => {
+        // axios
+        //     .post("Report/ReservationExcel", formOutput, {
+        //         headers: {
+        //             "Content-Disposition": "attachment; filename=template.xlsx",
+        //             "Content-Type":
+        //                 "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        //         },
+        //         responseType: "arraybuffer",
+        //     })
+        //     .then((response) => {
+        //         const url = window.URL.createObjectURL(
+        //             new Blob([response.data])
+        //         );
+        //         const link = document.createElement("a");
+        //         link.href = url;
+        //         link.setAttribute("download", "template.xlsx");
+        //         document.body.appendChild(link);
+        //         link.click();
+        //     })
+        //     .catch((error) => console.log(error));
         const instance = axios.create({
-            headers: {
-                "Content-Disposition": "attachment; filename=template.xlsx",
-                "Content-Type": "application/json",
-            },
-            responseType: "arraybuffer",
+            responseType: 'arraybuffer',
         });
 
         instance
-            .post("Report/ReservationExcel", formOutput)
+            .post('Report/ReservationExcel', formOutput)
             .then((response) => {
-                const url = window.URL.createObjectURL(new Blob([response]));
-                console.log(url);
-                const link = document.createElement("a");
+                const fileName = `${formOutput.dateFrom}-${formOutput.dateTo}`;
+                const url = window.URL.createObjectURL(
+                    new Blob([response.data])
+                );
+                const link = document.createElement('a');
                 link.href = url;
-                link.setAttribute("download", "template.xlsx");
+                link.setAttribute('download', `${fileName}.xls`);
                 document.body.appendChild(link);
                 link.click();
             })

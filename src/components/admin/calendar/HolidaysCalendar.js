@@ -32,6 +32,7 @@ const HolidaysCalendar = ({ match }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [loading, setLoading] = useState(true);
     const [holidayList, setHolidayList] = useState([]);
+    const [holidaysList, setHolidaysList] = useState([]);
     const [popConfirmVisible, setPopConfirmVisible] = useState(false)
 
     const getHolidayList = () => {
@@ -42,6 +43,8 @@ const HolidaysCalendar = ({ match }) => {
             })
             .then(({ data }) => {
                 setHolidayList(data);
+                const holidaysList = data.map((item) => item.shamsiDate);
+                setHolidaysList(holidaysList);
             })
             .catch((errorMessage) => notify.error(errorMessage))
             .then(() => setLoading(false));
@@ -80,6 +83,8 @@ const HolidaysCalendar = ({ match }) => {
                 );
 
                 setHolidayList(newHolidayList);
+                const holidaysList = newHolidayList.map((item) => item.shamsiDate);
+                setHolidaysList(holidaysList);
             })
             .catch((errorMessage) => notify.error(errorMessage))
             .then(() => setLoading(false));
@@ -127,6 +132,23 @@ const HolidaysCalendar = ({ match }) => {
                             onChange={onDayChange}
                             value={date}
                             format={"YYYY/MM/DD"}
+                            mapDays={({ date }) => {
+                                    let props = {};
+
+                                    if (
+                                        holidaysList.includes(
+                                            getDateFromObject(date)
+                                        )
+                                    )
+                                        return {
+                                            disabled: true,
+                                            style: { color: "#f30" },
+                                            onClick: () =>
+                                                notify.error(
+                                                    "این روز تعطیل می  باشد"
+                                                ),
+                                        };
+                                }}
                         />
                     </div>
                     <br />

@@ -4,9 +4,8 @@ import persian_fa from "react-date-object/locales/persian_fa";
 import AddDailyProgramModal from "./AddDailyProgramModal";
 import { Calendar, DateObject } from "react-multi-date-picker";
 import {
-    Card,
-    Row,
-    Col,
+    // Card,
+    // Col,
     Button,
     Space,
     Form,
@@ -115,7 +114,7 @@ const AddDailyProgram = ({ match }) => {
             return;
         }
 
-        if (copyDaysList.length > 1) {
+        if (copyDaysList.length > 0) {
             setDoCopyButtonVisible("show");
         }
 
@@ -222,9 +221,9 @@ const AddDailyProgram = ({ match }) => {
     ];
     return (
         <>
-            <Col sm={24} xs={24} md={19} lg={15} xlg={12}>
+            {/* <Col sm={24} xs={24} md={19} lg={15} xlg={12}> */}
                 <Spin delay={900} spinning={loading}>
-                    <Card title="ثبت برنامه جدید">
+                    {/* <Card title="ثبت برنامه جدید"> */}
                         <div id="large-calendar">
                             <Calendar
                                 calendar={persian}
@@ -288,7 +287,7 @@ const AddDailyProgram = ({ match }) => {
                                 </Button>
                             </Space>
                         </div>
-                    </Card>
+                    {/* </Card> */}
                 </Spin>
 
                 <Modal
@@ -305,7 +304,7 @@ const AddDailyProgram = ({ match }) => {
                         welfareId={welfareId}
                     />
                 </Modal>
-            </Col>
+             {/* </Col> */}
             <ul className={`copy-days-box ${copyBoxVisible}`}>
                 {copyDaysList.map((item) => {
                     return <li>{item}</li>;

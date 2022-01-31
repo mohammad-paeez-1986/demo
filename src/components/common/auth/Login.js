@@ -1,23 +1,49 @@
-import React, { useState } from "react";
-import { Col, Row, Form, Input, Spin, Button, Card, Carousel } from "antd";
-import logo from "images/logo-mci.png";
-import axios from "axios";
-import { useCookies } from "react-cookie";
-import notify from "general/notify";
+import React, { useState, useEffect } from 'react';
+import { Col, Row, Form, Input, Spin, Button, Card, Carousel } from 'antd';
+import logo from 'images/logo-mci.png';
+import axios from 'axios';
+import { RedoOutlined } from '@ant-design/icons';
+import { useCookies } from 'react-cookie';
+import notify from 'general/notify';
 
 const Login = () => {
     const [loading, setLoading] = useState(false);
-    const [cookie, setCookie] = useCookies(["token"]);
+    const [cookie, setCookie] = useCookies(['token']);
+    const [captcha, setCaptcha] = useState(null);
+
+    // get captcha
+    const getCaptcha = () => {
+        setLoading(true);
+        const instance = axios.create({
+            responseType: 'arraybuffer',
+        });
+        instance
+            .get('User/ReCaptcha')
+            .then((res) => {
+                // https://stackoverflow.com/a/52154751/9600858
+                let blob = new Blob([res.data], {
+                    type: res.headers['content-type'],
+                });
+                let image = URL.createObjectURL(blob);
+                setCaptcha(image);
+            })
+            .catch((errorMessage) => notify.error(errorMessage))
+            .then(() => setLoading(false));
+    };
+
+    useEffect(() => {
+        getCaptcha();
+    }, []);
 
     const onFinish = (values) => {
         setLoading(true);
         axios
-            .post("User/Login", values)
+            .post('User/Login', values)
             .then(({ data }) => {
                 // check if token property exists
                 if (data.token) {
-                    setCookie("token", data.token, {
-                        path: "/",
+                    setCookie('token', data.token, {
+                        path: '/',
                         maxAge: 86400,
                     });
                 }
@@ -47,20 +73,45 @@ const Login = () => {
                                 >
                                     <Form.Item
                                         label="نام کاربری"
-                                        name="username"
+                                        name="Username"
                                         rules={[{ required: true }]}
                                     >
-                                        <Input size="large" className="ltr-left" />
+                                        <Input
+                                            size="large"
+                                            className="ltr-left"
+                                        />
                                     </Form.Item>
 
                                     <Form.Item
                                         label="رمز عبور"
-                                        name="password"
+                                        name="Password"
                                         rules={[{ required: true }]}
                                     >
                                         <Input.Password className="ltr" />
                                     </Form.Item>
-                                    <br />
+                                    <Col xs={{ span: 24, offset: 0 }} sm={{ span: 16, offset: 8 }} md={{ span: 18, offset: 7 }} lg={{ span: 18, offset: 6 }}>
+                                        <div className="captcha-wrapper">
+                                            <img src={captcha} />
+                                            <span
+                                                className="refresh"
+                                                onClick={getCaptcha}
+                                            >
+                                                <RedoOutlined className="act-icon" />
+                                            </span>
+                                        </div>
+                                    </Col>
+                                    <Form.Item
+                                        label="کد کپچا"
+                                        name="CaptchaCode"
+                                        rules={[{ required: true }]}
+                                        style={{ clear: 'both' }}
+                                    >
+                                        <Input
+                                            size="large"
+                                            className="ltr-left"
+                                        />
+                                    </Form.Item>
+
                                     <br />
                                     <center>
                                         <Form.Item>

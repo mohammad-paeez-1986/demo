@@ -33,8 +33,8 @@ const ShowRule = ({ match }) => {
                 <Spin delay={900} spinning={loading}>
                     {rule ? (
                         <>
-                            <h2>{rule.title}</h2>
-                            <p>{rule.body}</p>
+                            <h2>{rule.title || ''}</h2>
+                            <p>{rule.body || ''}</p>
                         </>
                     ) : // (<h2>{rule.title}</h2>
                     // <p>{rule.body}</p>)

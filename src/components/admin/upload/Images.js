@@ -83,7 +83,7 @@ const Images = () => {
         const formData = new FormData();
         formData.append("OrderId", values.OrderId || 1);
         formData.append("TypeName", values.TypeName);
-        formData.append("title", values.title);
+        formData.append("title", values.title || '');
         formData.append("file", values.file.file);
 
         window.headers = {
@@ -208,7 +208,7 @@ const Images = () => {
                                             : "بدون عنوان"
                                         : title
                                         ? title + `( ترتیب: ${orderId})`
-                                        : `( ترتیب: ${orderId})`}
+                                        : `بدون عنوان ( ترتیب: ${orderId})`}
                                 </List.Item>
                             )}
                         />

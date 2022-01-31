@@ -6,7 +6,8 @@ import ShowMessage from "components/admin/message/ShowMessage";
 import ShowReservationReport from "components/admin/report/ShowReservationReport";
 import ShowSettings from "components/admin/settings/ShowSettings";
 import ShowUpdateUserForms from "components/admin/user/ShowUpdateUserForms";
-import AddDailyProgram from "components/admin/program/AddDailyProgram";
+// import AddDailyProgram from "components/admin/program/AddDailyProgram";
+import ShowAddProgramTabs from "components/admin/program/ShowAddProgramTabs";
 import AddWelfareCluster from "components/admin/welfareCluster/AddWelfareCluster";
 import ShowReservationHistory from "components/admin/program/ShowReservationHistory";
 import NextDayReservations from "components/admin/program/NextDayReservations";
@@ -85,7 +86,7 @@ const routes = [
     {
         path: ["/carwash/new", "/saloon/new", "/cafe/new", "/gym/new"],
         exact: true,
-        component: AddDailyProgram,
+        component: ShowAddProgramTabs,
     },
     {
         path: ["/carwash/get", "/saloon/get", "/cafe/get", "/gym/get"],

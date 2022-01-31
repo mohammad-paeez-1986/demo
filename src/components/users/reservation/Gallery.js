@@ -20,7 +20,7 @@ const Gallery = () => {
 
     useEffect(() => {
         axios
-            .post("IO/GetList", { typeName: "SPLASH" })
+            .post("IO/GetList", { typeName: "CAFE" })
             .then(({ data }) => {
                 setGalleryList(data);
             })

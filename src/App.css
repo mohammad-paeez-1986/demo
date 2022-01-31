@@ -1,12 +1,12 @@
 /* Custom font */
 @font-face {
     font-family: Mitra;
-    src: url("./fonts/Shabnam.ttf");
+    src: url('./fonts/Shabnam.ttf');
 }
 @font-face {
     font-family: Cairo;
     /* src: url("./fonts/Cairo-SemiBold.ttf"); */
-    src: url("./fonts/Cairo-SemiBold.ttf");
+    src: url('./fonts/Cairo-SemiBold.ttf');
     /* font-weight: normal; */
 }
 * {
@@ -65,6 +65,28 @@
     border: 1px solid #e0e0e0;
     border-top: 2px solid #64c2cf;
 }
+.captcha-wrapper img{
+    width: 80%;
+    z-index: -999999999999999;
+    height: 40px;
+}
+.captcha-wrapper .refresh{
+    width: 20%;
+    display: inline-block;
+    height: 40px;
+    line-height: 40px;
+    background-color: #f8f8f8;
+    border: 1px dashed #e0e0e0;
+    text-align: center;
+    cursor: pointer !important;
+}
+.captcha-wrapper .refresh:active span{
+    color: #0a4b50;
+}
+.captcha-wrapper .refresh span{
+    font-size: 20px;
+    color: #1b919e;
+}
 h2,
 h1 {
     font-family: Cairo;
@@ -109,6 +131,15 @@ h1 {
 .ant-card-tab-footer {
     margin: 40px 0px 0 0;
     background-color: transparent;
+}
+.ant-tabs-large > .ant-tabs-nav .ant-tabs-tab {
+    
+}
+.ant-tabs-tab-btn{
+    font-size: 13px;
+    /* color: #333 !important; */
+    font-family: Cairo;
+    letter-spacing: 1px;
 }
 /* Form */
 .input-max-width {
@@ -169,7 +200,7 @@ h1 {
     }
 }
 /* Global */
-p{
+p {
     text-align: justify;
 }
 .sm-font {
@@ -186,7 +217,7 @@ p{
 }
 .act-icon {
     cursor: pointer;
-    font-size: 14px;
+    font-size: 14px ;
 }
 .float-left {
     float: left;
@@ -215,7 +246,7 @@ p{
 .show {
     display: block;
 }
-.dashboard-admin{
+.dashboard-admin {
     background-image: url(./images/admin.svg);
     background-repeat: no-repeat;
     background-size: 200px;
@@ -225,7 +256,7 @@ p{
     align-items: center;
     min-height: 100vh;
 }
-.dashboard-admin h2{
+.dashboard-admin h2 {
     text-align: center;
     font-size: 15px;
     color: #1b919e;
@@ -285,7 +316,7 @@ p{
 .iconsList:hover {
     border: 1px solid #1b919e;
 }
-input[type="text"] {
+input[type='text'] {
     border-radius: 2px;
     /* padding: 10px; */
     margin-top: -4px;
@@ -411,13 +442,13 @@ td {
     /* border-bottom-left-radius: 5px; */
 }
 .bg1 {
-    background-image: url("../src/images/bg5.jpg");
+    background-image: url('../src/images/bg5.jpg');
 }
 .bg2 {
-    background-image: url("../src/images/bg4.jpg");
+    background-image: url('../src/images/bg4.jpg');
 }
 .bg3 {
-    background-image: url("../src/images/bg6.jpg");
+    background-image: url('../src/images/bg6.jpg');
 }
 .form-col {
     background-color: #fff;
@@ -586,7 +617,7 @@ div.list-switch-container button {
     float: right; */
     display: block;
 }
-.ant-pagination-options{
+.ant-pagination-options {
     float: left;
 }
 /* DIVIDER */
@@ -764,4 +795,11 @@ ul.copy-days-box li:nth-child(1) {
 .ant-alert-with-description .ant-alert-message {
     color: #115d63;
     font-size: 14px;
+}
+/* Upload */
+.ant-upload.ant-upload-drag p.ant-upload-drag-icon .anticon{
+    display: block;
+}
+.ant-upload-hint{
+    text-align: center;
 }
