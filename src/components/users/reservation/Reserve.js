@@ -23,6 +23,7 @@ const { Option } = Select;
 
 const Reserve = ({ match, history }) => {
     const [welfareId, setWelfareId] = useState(null);
+    const [welfareType, setWelfareType] = useState(null);
     const [message, setMessage] = useState(null);
     const [reservableDays, setReservableDays] = useState([]);
     const [reservableTimes, setReservableTimes] = useState([]);
@@ -48,10 +49,12 @@ const Reserve = ({ match, history }) => {
         setCompanionCountList([]);
         setSubmitButtonDisabled(true);
         setFinalStep(false);
+        setWelfareType(null)
 
         form.resetFields();
         const type = url.split("/")[1]?.toUpperCase();
 
+        setWelfareType(type)
         // get welfareId by url
         axios.post("Welfare/Get", { type }).then(({ data }) => {
             const welfareId = data[0].id;
@@ -210,14 +213,15 @@ const Reserve = ({ match, history }) => {
             <Card
                 title={`رزرواسیون ${welfareName}`}
                 extra={[
-                    welfareId === 4 && (
+                    // welfareId === 4 && (
                         <Button
                             size="small"
                             onClick={() => setIsModalVisible(true)}
                         >
-                            مشاهده منو و آلبوم
+                        {welfareId === 4 ? 'مشاهده منو و آلبوم' : 'مشاهده آلبوم'}
+                            
                         </Button>
-                    ),
+                    // ),
                 ]}
                 bodyStyle={{ background: "#f9f9f9", marginTop: 0 }}
             >
@@ -468,14 +472,14 @@ const Reserve = ({ match, history }) => {
                 </Form>
             </Card>
             <Modal
-                title="مشاهده منو و آلبوم"
+                title={welfareId === 4 ? 'مشاهده منو و آلبوم' : 'مشاهده آلبوم'}
                 visible={isModalVisible}
                 footer={null}
                 onCancel={closeModal}
                 width={1000}
                 style={{ top: 30 }}
             >
-                <Gallery />
+                <Gallery type={welfareType}/>
             </Modal>
         </Col>
     );

@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from "react";
-import { LeftOutlined, RightOutlined } from "@ant-design/icons";
-import { Col, Carousel } from "antd";
-import notify from "general/notify";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import { LeftOutlined, RightOutlined } from '@ant-design/icons';
+import { Col, Carousel } from 'antd';
+import notify from 'general/notify';
+import axios from 'axios';
 
-const Gallery = () => {
+const Gallery = ({ type }) => {
     const [galleryList, setGalleryList] = useState([]);
 
     const settings = {
@@ -20,12 +20,12 @@ const Gallery = () => {
 
     useEffect(() => {
         axios
-            .post("IO/GetList", { typeName: "CAFE" })
+            .post('IO/GetList', { typeName: type })
             .then(({ data }) => {
                 setGalleryList(data);
             })
             .catch((errorMessage) => notify.error(errorMessage));
-    }, []);
+    }, [type]);
 
     return (
         <div className="modal-album">
