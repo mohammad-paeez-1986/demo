@@ -79,7 +79,7 @@ const Profile = ({ userId }) => {
             <Form
                 labelCol={{ xs: 7, md: 6, lg: 5, xlg: 5 }}
                 onFinish={onFinish}
-                scrollToFrstError={true}
+                scrollToFirstError={true}
                 form={form}
             >
                 <Form.Item name="department" label="دپارتمان">

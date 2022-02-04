@@ -23,7 +23,7 @@ const UpdatePassword = () => {
             <Spin delay={900} spinning={loading}>
                 <Form
                     labelCol={{ xs: 7, md: 6, lg: 5, xlg: 5 }}
-                    scrollToFrstError={true}
+                    scrollToFirstError={true}
                     onFinish={onFinish}
                 >
                     <Form.Item

@@ -23,7 +23,7 @@ const UpdatePassword = () => {
         <div>
             <Form
                 labelCol={{ xs: 7, md: 6, lg: 5, xlg: 5 }}
-                scrollToFrstError={true}
+                scrollToFirstError={true}
                 onFinish={onFinish}
                 
             >

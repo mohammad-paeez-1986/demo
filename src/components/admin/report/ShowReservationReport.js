@@ -164,7 +164,7 @@ const ShowReservationReport = () => {
                     <Form
                         labelCol={{ xs: 3, md: 5, lg: 5 }}
                         onFinish={onFinish}
-                        scrollToFrstError={true}
+                        scrollToFirstError={true}
                         form={form}
                         initialValues={{
                             welfareId: 0,

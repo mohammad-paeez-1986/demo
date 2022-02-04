@@ -23,7 +23,7 @@ const ShowSettings = () => {
             <Card title="تنظیمات">
                 <Form
                     labelCol={{ xs: 7, md: 6, lg: 8, xlg: 5 }}
-                    scrollToFrstError={true}
+                    scrollToFirstError={true}
                 >
                     <Form.Item
                         name="departmentId"

@@ -25,7 +25,7 @@ const UpdateMessage = ({ messageData, onSuccess }) => {
             <Form
                 labelCol={{ xs: 4, md: 4, lg: 3, xlg: 4 }}
                 onFinish={onFinish}
-                scrollToFrstError={true}
+                scrollToFirstError={true}
                 initialValues={{
                     title: messageData.title,
                     body: messageData.body,

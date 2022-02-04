@@ -67,7 +67,7 @@ const VipSettings = ({ welfareId }) => {
                 labelCol={{ md: 4 }}
                 // wrapperCol={{ xs: 12, sm:19,md: 14, lg: 19, xlg: 17 }}
                 onFinish={onFinish}
-                scrollToFrstError={true}
+                scrollToFirstError={true}
                 form={form}
             >
                 <Form.Item

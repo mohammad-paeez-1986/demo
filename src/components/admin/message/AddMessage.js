@@ -57,7 +57,7 @@ const AddMessage = ({ match }) => {
                     <Form
                         labelCol={{ xs: 7, md: 6, lg: 4, xlg: 5 }}
                         onFinish={onFinish}
-                        scrollToFrstError={true}
+                        scrollToFirstError={true}
                         form={form}
                     >
                         <Form.Item
