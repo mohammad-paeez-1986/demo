@@ -56,7 +56,6 @@ const AddDailyProgram = ({ match }) => {
         const today = new DateObject({ calendar: persian, locale: persian_fa });
         const type = url.split('/')[1]?.toUpperCase();
         axios.post('Welfare/Get', { type }).then(({ data }) => {
-            // console.log(data);
             setWelfareId(data[0].id);
             onDayChange(today, false, data[0].id);
         });
@@ -69,7 +68,8 @@ const AddDailyProgram = ({ match }) => {
             });
     }, [url]);
 
-    const onDayChange = (date, isObject = false, welfareId) => {
+    const onDayChange = (date, isObject = false, sentWelfareId = false) => {
+        const validWelfareId = !sentWelfareId ? welfareId : sentWelfareId;
         setSelectedDayProgramList([]);
         let selectedDate;
         if (!isObject) {
@@ -88,7 +88,7 @@ const AddDailyProgram = ({ match }) => {
         axios
             .post('Reservation/GetReservable', {
                 dateFrom: selectedDate,
-                welfareId,
+                welfareId: validWelfareId,
             })
             .then(({ data }) => {
                 if (data.length) {
