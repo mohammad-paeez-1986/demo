@@ -20,7 +20,7 @@ const ResetPassword = ({ userId }) => {
         <Spin delay={900} spinning={loading}>
             <div className="desc">
                 <br />
-                پس از بازنشانی، رمز عبور کاربر به کد کارمندی تغییر خواهد کرد.
+                پس از بازنشانی، رمز عبور کاربر به کد ملی تغییر خواهد کرد.
             </div>
             <div className="ant-card-footer">
                 <Button
