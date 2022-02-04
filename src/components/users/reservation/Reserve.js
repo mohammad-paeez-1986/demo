@@ -80,6 +80,9 @@ const Reserve = ({ match, history }) => {
                     welfareId,
                 })
                 .then(({ data }) => {
+                    if (!data.length) {
+                        notify.error('روزی برای رزرو وجود ندارد')
+                    }
                     setReservableDays(data);
                     setDaysLoading(false);
                 })
