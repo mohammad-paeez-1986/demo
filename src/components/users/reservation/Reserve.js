@@ -193,9 +193,6 @@ const Reserve = ({ match, history }) => {
         delete values.day;
         delete values.rule;
 
-        // console.log(values);
-        // return
-
         axios
             .post('Reservation/New', values)
             .then(({ message }) => {
