@@ -65,12 +65,12 @@
     border: 1px solid #e0e0e0;
     border-top: 2px solid #64c2cf;
 }
-.captcha-wrapper img{
+.captcha-wrapper img {
     width: 80%;
     z-index: -999999999999999;
     height: 40px;
 }
-.captcha-wrapper .refresh{
+.captcha-wrapper .refresh {
     width: 20%;
     display: inline-block;
     height: 40px;
@@ -80,10 +80,10 @@
     text-align: center;
     cursor: pointer !important;
 }
-.captcha-wrapper .refresh:active span{
+.captcha-wrapper .refresh:active span {
     color: #0a4b50;
 }
-.captcha-wrapper .refresh span{
+.captcha-wrapper .refresh span {
     font-size: 20px;
     color: #1b919e;
 }
@@ -133,9 +133,8 @@ h1 {
     background-color: transparent;
 }
 .ant-tabs-large > .ant-tabs-nav .ant-tabs-tab {
-    
 }
-.ant-tabs-tab-btn{
+.ant-tabs-tab-btn {
     font-size: 13px;
     /* color: #333 !important; */
     font-family: Cairo;
@@ -147,9 +146,21 @@ h1 {
 }
 .ant-form-item-explain.ant-form-item-explain-error,
 .ant-form-item-explain.ant-form-item-explain-success {
-    font-size: 11.5px;
     position: absolute;
     bottom: -23px;
+}
+
+.ant-form-item-explain, .ant-show-help-leave, .ant-show-help-leave-active {
+    font-size: 11.5px;
+    height: none;
+    min-height: auto;
+}
+.ant-form-item-with-help .ant-form-item-explain{
+    min-height: auto;
+    max-height: 0px;
+}
+.ant-form-item-explain-error{
+    height: 24px !important;
 }
 .ant-input {
     border-radius: 1px;
@@ -217,7 +228,7 @@ p {
 }
 .act-icon {
     cursor: pointer;
-    font-size: 14px ;
+    font-size: 14px;
 }
 .float-left {
     float: left;
@@ -797,9 +808,9 @@ ul.copy-days-box li:nth-child(1) {
     font-size: 14px;
 }
 /* Upload */
-.ant-upload.ant-upload-drag p.ant-upload-drag-icon .anticon{
+.ant-upload.ant-upload-drag p.ant-upload-drag-icon .anticon {
     display: block;
 }
-.ant-upload-hint{
+.ant-upload-hint {
     text-align: center;
 }
