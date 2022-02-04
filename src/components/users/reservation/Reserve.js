@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
     Card,
     Col,
@@ -12,12 +12,13 @@ import {
     Checkbox,
     Modal,
     Alert,
-} from "antd";
-import notify from "general/notify";
-import axios from "axios";
-import Gallery from "./Gallery";
-import { getWelfareName } from "general/Helper";
-import { Link, Redirect } from "react-router-dom";
+    Space,
+} from 'antd';
+import notify from 'general/notify';
+import axios from 'axios';
+import Gallery from './Gallery';
+import { getWelfareName } from 'general/Helper';
+import { Link, Redirect } from 'react-router-dom';
 
 const { Option } = Select;
 
@@ -32,13 +33,14 @@ const Reserve = ({ match, history }) => {
     const [daysLoading, setDaysLoading] = useState(true);
     const [timesLoading, setTimesLoading] = useState(false);
     const [clusterLoading, setClusterLoading] = useState(false);
-    const [clusterName, setClusterName] = useState("");
+    const [clusterName, setClusterName] = useState('');
     const [submitButtonDisabled, setSubmitButtonDisabled] = useState(true);
     const [clusterList, setClusterList] = useState([]);
-    const [welfareName, setWelfareName] = useState("");
+    const [welfareName, setWelfareName] = useState('');
     const [finalStep, setFinalStep] = useState(false);
     const [companionCountList, setCompanionCountList] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
+    const [serviceList, setServiceList] = useState([]);
     const { url } = match;
     const [form] = Form.useForm();
 
@@ -49,39 +51,40 @@ const Reserve = ({ match, history }) => {
         setCompanionCountList([]);
         setSubmitButtonDisabled(true);
         setFinalStep(false);
-        setWelfareType(null)
+        setWelfareType(null);
 
         form.resetFields();
-        const type = url.split("/")[1]?.toUpperCase();
+        const type = url.split('/')[1]?.toUpperCase();
 
-        setWelfareType(type)
+        setWelfareType(type);
         // get welfareId by url
-        axios.post("Welfare/Get", { type }).then(({ data }) => {
+        axios.post('Welfare/Get', { type }).then(({ data }) => {
             const welfareId = data[0].id;
 
             setWelfareId(welfareId);
             setWelfareName(getWelfareName(welfareId));
 
             if (welfareId === 2) {
-                setClusterName("اتاق");
+                setClusterName('اتاق');
             } else if (welfareId === 4) {
-                setClusterName("میز");
+                setClusterName('میز');
             }
+
             // get last message
             axios
-                .post("Messaging/GetLast", { welfareId, isPublic: false })
+                .post('Messaging/GetLast', { welfareId, isPublic: false })
                 .then(({ data }) => {
                     setMessage(data);
                 });
             // .then(() => setMessageLoading(false));
             // get reservable days of week
             axios
-                .post("Reservation/GetReservableDayOfWeek", {
+                .post('Reservation/GetReservableDayOfWeek', {
                     welfareId,
                 })
                 .then(({ data }) => {
                     if (!data.length) {
-                        notify.error('روزی برای رزرو وجود ندارد')
+                        notify.error('روزی برای رزرو وجود ندارد');
                     }
                     setReservableDays(data);
                     setDaysLoading(false);
@@ -102,13 +105,13 @@ const Reserve = ({ match, history }) => {
         setTimesLoading(true);
         // get scences
         axios
-            .post("Reservation/GetReservable", {
+            .post('Reservation/GetReservable', {
                 welfareId,
                 dateFrom: selectedDay,
             })
             .then(({ data }) => {
                 if (!data.length) {
-                    notify.error("سانسی برای رزرو یافت نشد");
+                    notify.error('سانسی برای رزرو یافت نشد');
                 } else {
                     setReservableTimes(data);
                 }
@@ -131,10 +134,9 @@ const Reserve = ({ match, history }) => {
     const onClusterChange = (e) => {
         if (welfareId === 2) {
             const selectedClusterId = e.target.value;
-            const selectedItem =
-                clusterList.find(
-                    (item) => item?.welfareclusterId === selectedClusterId
-                );
+            const selectedItem = clusterList.find(
+                (item) => item?.welfareclusterId === selectedClusterId
+            );
 
             setCompanionCountList([
                 ...Array(parseInt(selectedItem?.clusterCapacity)).keys(),
@@ -155,14 +157,14 @@ const Reserve = ({ match, history }) => {
             }
             // get scences
             axios
-                .post("WelfareCluster/Get", {
+                .post('WelfareCluster/Get', {
                     welfareId,
-                    welfareType: "none",
+                    welfareType: 'none',
                     // dateFrom: selectedDay,
                 })
                 .then(({ data }) => {
                     if (!data.length) {
-                        notify.error("موردی برای رزرو یافت نشد");
+                        notify.error('موردی برای رزرو یافت نشد');
                     } else {
                         setClusterList(data);
                         // setSubmitButtonDisabled(true);
@@ -172,20 +174,33 @@ const Reserve = ({ match, history }) => {
                     notify.error(errorMessage);
                 })
                 .then(() => setClusterLoading(false));
-        } else {
+        } else if (welfareId === 1) {
             setFinalStep(true);
             // setSubmitButtonDisabled(false);
+        } else {
+            axios
+                .post('WelfareServices/Get', { welfareId })
+                .then(({ data }) => {
+                    setServiceList(data);
+                    setFinalStep(true)
+                })
+                .catch((errorMessage) => notify.error(errorMessage));
+            // .then(() => setLoading(false));
         }
     };
 
     const onFinish = (values) => {
         delete values.day;
         delete values.rule;
+
+        // console.log(values);
+        // return
+
         axios
-            .post("Reservation/New", values)
+            .post('Reservation/New', values)
             .then(({ message }) => {
                 notify.success(message);
-                history.push(url.replace("reservation", "gethistory"));
+                history.push(url.replace('reservation', 'gethistory'));
             })
             .catch((errorMessage) => notify.error(errorMessage));
     };
@@ -217,16 +232,17 @@ const Reserve = ({ match, history }) => {
                 title={`رزرواسیون ${welfareName}`}
                 extra={[
                     // welfareId === 4 && (
-                        <Button
-                            size="small"
-                            onClick={() => setIsModalVisible(true)}
-                        >
-                        {welfareId === 4 ? 'مشاهده منو و آلبوم' : 'مشاهده آلبوم'}
-                            
-                        </Button>
+                    <Button
+                        size="small"
+                        onClick={() => setIsModalVisible(true)}
+                    >
+                        {welfareId === 4
+                            ? 'مشاهده منو و آلبوم'
+                            : 'مشاهده آلبوم'}
+                    </Button>,
                     // ),
                 ]}
-                bodyStyle={{ background: "#f9f9f9", marginTop: 0 }}
+                bodyStyle={{ background: '#f9f9f9', marginTop: 0 }}
             >
                 <Form onFinish={onFinish} form={form}>
                     {/* <Alert message="" type="info" /> */}
@@ -343,8 +359,8 @@ const Reserve = ({ match, history }) => {
                                                                     1 &&
                                                                     (genderAcceptance ===
                                                                     1
-                                                                        ? "مردانه"
-                                                                        : "زنانه")}
+                                                                        ? 'مردانه'
+                                                                        : 'زنانه')}
                                                             </span>
                                                             <br />
                                                         </Radio.Button>
@@ -358,12 +374,44 @@ const Reserve = ({ match, history }) => {
                         </>
                     ) : null}
                     <br />
+                    {serviceList.length ? (
+                        <>
+                            <br />
+                            <Badge.Ribbon
+                                text="انتخاب سرویس"
+                                className="ribbon"
+                                placement="start"
+                                color="cyan"
+                            ></Badge.Ribbon>
+                            <Form.Item name="servicesId" label="">
+                                <Checkbox.Group>
+                                    {serviceList.map((service) => (
+                                        <>
+                                            <Checkbox value={service.id}>
+                                                <Space>
+                                                    {service.serviceName}
+                                                    <span className="small-divider">
+                                                        ({service.price} تومان)
+                                                    </span>
+                                                    <span className="small-divider">
+                                                        {service.comment}
+                                                    </span>
+                                                </Space>
+                                            </Checkbox>
+                                            <br />
+                                        </>
+                                    ))}
+                                </Checkbox.Group>
+                            </Form.Item>
+                        </>
+                    ) : null}
+                    <br />
                     {clusterList.length ? (
                         <>
                             <br />
                             <Badge.Ribbon
                                 // text={() => "انتخاب "+ clusterName}
-                                text={"انتخاب " + clusterName}
+                                text={'انتخاب ' + clusterName}
                                 className="ribbon"
                                 placement="start"
                                 color="cyan"
@@ -441,8 +489,8 @@ const Reserve = ({ match, history }) => {
                                         <>
                                             <Link
                                                 to={url.replace(
-                                                    "reservation",
-                                                    "rule"
+                                                    'reservation',
+                                                    'rule'
                                                 )}
                                             >
                                                 شرایط {welfareName} &nbsp;
@@ -482,7 +530,7 @@ const Reserve = ({ match, history }) => {
                 width={1000}
                 style={{ top: 30 }}
             >
-                <Gallery type={welfareType}/>
+                <Gallery type={welfareType} />
             </Modal>
         </Col>
     );
