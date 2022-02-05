@@ -41,6 +41,7 @@ const Reserve = ({ match, history }) => {
     const [companionCountList, setCompanionCountList] = useState([]);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [serviceList, setServiceList] = useState([]);
+    const [selectedServicesList, setSelectedServicesList] = useState([]);
     const { url } = match;
     const [form] = Form.useForm();
 
@@ -182,7 +183,6 @@ const Reserve = ({ match, history }) => {
                 .post('WelfareServices/Get', { welfareId })
                 .then(({ data }) => {
                     setServiceList(data);
-                    setFinalStep(true)
                 })
                 .catch((errorMessage) => notify.error(errorMessage));
             // .then(() => setLoading(false));
@@ -205,6 +205,17 @@ const Reserve = ({ match, history }) => {
     const onRuleAcceptanceChange = (e) => {
         if (e.target.checked) {
             setSubmitButtonDisabled(false);
+        } else {
+            setSubmitButtonDisabled(true);
+        }
+    };
+
+    const isEmptySelectedServices = (e) => {
+        if (e.length) {
+            setFinalStep(true);
+            if (form.getFieldValue('rule')) {
+                setSubmitButtonDisabled(false);    
+            }
         } else {
             setSubmitButtonDisabled(true);
         }
@@ -381,7 +392,9 @@ const Reserve = ({ match, history }) => {
                                 color="cyan"
                             ></Badge.Ribbon>
                             <Form.Item name="servicesId" label="">
-                                <Checkbox.Group>
+                                <Checkbox.Group
+                                    onChange={isEmptySelectedServices}
+                                >
                                     {serviceList.map((service) => (
                                         <>
                                             <Checkbox value={service.id}>
