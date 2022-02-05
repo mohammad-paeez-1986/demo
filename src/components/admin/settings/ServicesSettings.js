@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Button, Space, Form, Modal, Table, Spin, Popconfirm } from 'antd';
+import { Button, Form, Modal, Table, Spin, Popconfirm } from 'antd';
 import notify from 'general/notify';
 import axios from 'axios';
 import AddService from './AddService';
@@ -90,20 +90,18 @@ const CarwashServicesSettings = ({ welfareId }) => {
 
     return (
         <>
-            <Space>
+            <div className="add-button-top">
                 <Button
-                    type="secondary"
-                    ghost
-                    className="ghost float-left"
+                    type="default"
                     size="small"
                     onClick={() => {
                         setServiceData(null);
                         setIsModalVisible(true);
                     }}
                 >
-                    افزودن خدمت
+                    افزودن مورد جدید
                 </Button>
-            </Space>
+            </div>
             <Table
                 bordered
                 columns={columns}
