@@ -1,24 +1,22 @@
-import React, { useState, useEffect } from "react";
-import {
-    Card,
-    Col,
-    Table,
-    Popconfirm,
-} from "antd";
-import notify from "general/notify";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import { Card, Col, Table, Popconfirm, Modal } from 'antd';
+import notify from 'general/notify';
+import axios from 'axios';
 import {
     CloseOutlined,
     CheckOutlined,
     CloseSquareOutlined,
-} from "@ant-design/icons";
-
+    PicRightOutlined,
+} from '@ant-design/icons';
+import ShowReservationServices from 'components/common/reservation/ShowReservationServices';
 
 const ShowUserReservationHistory = ({ match }) => {
     const [loading, setLoading] = useState(false);
     const [welfareId, setWelfareId] = useState(null);
     const [historyList, setHistoryList] = useState([]);
     const [isFirstRequestSent, setIsFirstRequestSent] = useState(false);
+    const [reservationId, setReservationId] = useState(null);
+    const [isModalVisible, setIsModalVisible] = useState(false);
     const { url } = match;
 
     // const onFinish = (values) => {
@@ -40,10 +38,10 @@ const ShowUserReservationHistory = ({ match }) => {
     const onCancelConfirm = (reservationId) => {
         setLoading(true);
         axios
-            .post("Reservation/RevokeByUser", {
+            .post('Reservation/RevokeByUser', {
                 reservationId,
                 // status: 7,
-                revokeReason: "Revoke By User",
+                revokeReason: 'Revoke By User',
             })
             .then(({ message }) => {
                 notify.success(message);
@@ -63,43 +61,21 @@ const ShowUserReservationHistory = ({ match }) => {
             .then(() => setLoading(false));
     };
 
-    useEffect(() => {
-        setHistoryList([]);
-        setIsFirstRequestSent(false);
-        // form.setFieldsValue({
-        //     dateFrom: "",
-        //     dateTo: "",
-        // });
-        setLoading(true);
-        const type = url.split("/")[1]?.toUpperCase();
-        axios.post("Welfare/Get", { type }).then(({ data }) => {
-            setWelfareId(data[0].id);
-            axios
-                .post("User/GetHistory", { welfareId: data[0].id })
-                .then(({ data }) => {
-                    setHistoryList(data);
-                    setIsFirstRequestSent(true);
-                })
-                .catch((errorMessage) => notify.error(errorMessage))
-                .then(() => setLoading(false));
-        });
-    }, [url]);
-
-    const columns = [
+    let columns = [
         {
-            title: "تاریخ",
-            dataIndex: "dailyProgramShamsiDate",
-            key: "dailyProgramShamsiDate",
+            title: 'تاریخ',
+            dataIndex: 'dailyProgramShamsiDate',
+            key: 'dailyProgramShamsiDate',
         },
         {
-            title: "زمان سانس",
-            key: "startTime",
+            title: 'زمان سانس',
+            key: 'startTime',
             render: ({ startTime, endTime }) => `${startTime} - ${endTime}`,
         },
         {
-            title: "وی آی پی",
-            key: "isVip",
-            className: "edit",
+            title: 'وی آی پی',
+            key: 'isVip',
+            className: 'edit',
             render: (record) =>
                 record.isVip ? (
                     <CheckOutlined className="green" />
@@ -108,13 +84,13 @@ const ShowUserReservationHistory = ({ match }) => {
                 ),
         },
         {
-            title: "وضعیت",
-            dataIndex: "statusReserve",
-            key: "statusReserve",
+            title: 'وضعیت',
+            dataIndex: 'statusReserve',
+            key: 'statusReserve',
         },
         {
-            title: "لغو",
-            className: "act-icon delete",
+            title: 'لغو',
+            className: 'act-icon delete',
             render: ({ reservationId, presenceStatus }) =>
                 presenceStatus === 0 || presenceStatus === 1 ? (
                     <Popconfirm
@@ -124,10 +100,56 @@ const ShowUserReservationHistory = ({ match }) => {
                         <CloseSquareOutlined />
                     </Popconfirm>
                 ) : (
-                    <span style={{ color: "#000" }}>-</span>
+                    <span style={{ color: '#000' }}>-</span>
                 ),
         },
     ];
+
+    const type = url.split('/')[1]?.toUpperCase();
+
+    if (type.toLowerCase() === 'carwash') {
+        columns.splice(4, 0, {
+            title: 'سرویس ها',
+            onCell: ({ reservationId }) => {
+                return {
+                    onClick: () => {
+                        setReservationId(reservationId);
+                        setIsModalVisible(true);
+                    },
+                };
+            },
+            key: 'reservationId',
+            className: 'act-icon edit',
+            render: () => <PicRightOutlined style={{ fontSize: 18 }} />,
+        });
+    }
+
+    useEffect(() => {
+        setHistoryList([]);
+        setIsFirstRequestSent(false);
+        // form.setFieldsValue({
+        //     dateFrom: "",
+        //     dateTo: "",
+        // });
+        setLoading(true);
+        axios.post('Welfare/Get', { type }).then(({ data }) => {
+            const currentWelfareId = data[0].id;
+
+            // if (currentWelfareId == 3) {
+
+            // }
+            setWelfareId(currentWelfareId);
+
+            axios
+                .post('User/GetHistory', { welfareId: currentWelfareId })
+                .then(({ data }) => {
+                    setHistoryList(data);
+                    setIsFirstRequestSent(true);
+                })
+                .catch((errorMessage) => notify.error(errorMessage))
+                .then(() => setLoading(false));
+        });
+    }, [url]);
 
     return (
         <Col sm={24} xs={24} md={20} lg={18} xlg={12}>
@@ -205,6 +227,16 @@ const ShowUserReservationHistory = ({ match }) => {
                     scroll={{ x: true }}
                 />
             </Card>
+
+            <Modal
+                title="مشاهده سرویس ها"
+                visible={isModalVisible}
+                footer={null}
+                destroyOnClose={true}
+                onCancel={() => setIsModalVisible(false)}
+            >
+                <ShowReservationServices reservationId={reservationId} />
+            </Modal>
         </Col>
     );
 };
