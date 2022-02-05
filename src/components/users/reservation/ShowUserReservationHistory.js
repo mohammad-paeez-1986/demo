@@ -106,8 +106,7 @@ const ShowUserReservationHistory = ({ match }) => {
     ];
 
     const type = url.split('/')[1]?.toUpperCase();
-    const typeName = type.toLowerCase();
-    if (typeName === 'carwash') {
+    if (type === 'CARWASH') {
         columns.splice(4, 0, {
             title: 'سرویس ها',
             onCell: ({ reservationId }) => {
@@ -123,7 +122,7 @@ const ShowUserReservationHistory = ({ match }) => {
             render: () => <PicRightOutlined style={{ fontSize: 18 }} />,
         });
     }
-    if (typeName === 'cafe' || typeName === 'saloon') {
+    if (type === 'CAFE' || type === 'SALOON') {
         columns.splice(3, 0, {
             title: 'تعداد همراه',
             key: 'companions',
