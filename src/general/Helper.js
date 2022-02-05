@@ -1,17 +1,17 @@
 export const toEnglishDigits = (val) => {
-    const persian = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+    const persian = ['۰', '۱', '۲', '۳', '۴', '۵', '۶', '۷', '۸', '۹'];
     const english = val.replace(/[۰-۹]/g, (char) => persian.indexOf(char));
 
     return english;
 };
 
-export const getNumeric = (val) => toEnglishDigits(val).replace(/\D/g, "");
+export const getNumeric = (val) => toEnglishDigits(val).replace(/\D/g, '');
 
 export const isNationalCode = (input) => {
     var L = input.length;
 
     if (L < 8 || parseInt(input, 10) == 0) return false;
-    input = ("0000" + input).substr(L + 4 - 10);
+    input = ('0000' + input).substr(L + 4 - 10);
     if (parseInt(input.substr(3, 6), 10) == 0) return false;
     var c = parseInt(input.substr(9, 1), 10);
     var s = 0;
@@ -27,7 +27,7 @@ export const isPersonnelCode = (input) => {
         return false;
     }
 
-    if (!input.toString().startsWith("07")) {
+    if (!input.toString().startsWith('07')) {
         return false;
     }
 
@@ -43,7 +43,7 @@ export const isMobile = (input) => {
         return false;
     }
 
-    if (!input.toString().startsWith("09")) {
+    if (!input.toString().startsWith('09')) {
         return false;
     }
 
@@ -52,12 +52,12 @@ export const isMobile = (input) => {
 
 export const getUriAndMessageType = (name) => {
     let uri, messageType;
-    if (name === "message") {
-        uri = "messaging";
-        messageType = "اطلاعیه";
-    } else if (name === "rule") {
-        uri = "rule";
-        messageType = "قانون";
+    if (name === 'message') {
+        uri = 'messaging';
+        messageType = 'اطلاعیه';
+    } else if (name === 'rule') {
+        uri = 'rule';
+        messageType = 'قانون';
     }
     return {
         uri,
@@ -67,23 +67,27 @@ export const getUriAndMessageType = (name) => {
 
 export const getDateFromObject = (date) => {
     let { year, month, day } = date;
-    month = month.toString().padStart(2, "0");
-    day = day.toString().padStart(2, "0");
+    month = month.toString().padStart(2, '0');
+    day = day.toString().padStart(2, '0');
 
-    return year + "/" + month + "/" + day;
+    return year + '/' + month + '/' + day;
 };
 
 export const getWelfareName = (welfareId) => {
     switch (welfareId) {
         case 1:
-            return "باشگاه";
+            return 'باشگاه';
         case 2:
-            return "اتاق جلسات";
+            return 'اتاق جلسات';
         case 3:
-            return "کارواش";
+            return 'کارواش';
         case 4:
-            return "کافه";
+            return 'کافه';
         default:
-            return "عمومی";
+            return 'عمومی';
     }
+};
+
+export const formatNumber = (number) => {
+    return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 };

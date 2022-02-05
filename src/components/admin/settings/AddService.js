@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button, Form, Spin, Input, Textarea } from 'antd';
-import { getNumeric } from 'general/Helper';
+import { getNumeric, formatNumber } from 'general/Helper';
 import axios from 'axios';
 import notify from 'general/notify';
 
@@ -16,7 +16,7 @@ const AddServiceModal = ({ welfareId, closeModal, getData, serviceData }) => {
 
             form.setFieldsValue({
                 serviceName,
-                price,
+                price: formatNumber(price),
                 comment,
             });
         }
@@ -31,10 +31,12 @@ const AddServiceModal = ({ welfareId, closeModal, getData, serviceData }) => {
             uri = 'New';
         } else {
             values.id = serviceData.id;
-            values.isActive = true
+            values.isActive = true;
             uri = 'Modify';
         }
 
+        values.price = values.price.replace(/\,+/g, "")
+        
         setLoading(true);
         axios
             .post(`WelfareServices/${uri}`, values)
@@ -68,7 +70,7 @@ const AddServiceModal = ({ welfareId, closeModal, getData, serviceData }) => {
                         name="price"
                         label="قیمت"
                         rules={[{ required: true }]}
-                        normalize={(val) => getNumeric(val)}
+                        normalize={(val) => formatNumber(getNumeric(val))}
                     >
                         <Input />
                     </Form.Item>

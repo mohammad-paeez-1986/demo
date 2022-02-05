@@ -3,6 +3,7 @@ import { Button, Space, Form, Modal, Table, Spin, Popconfirm } from 'antd';
 import notify from 'general/notify';
 import axios from 'axios';
 import AddService from './AddService';
+import { formatNumber } from 'general/Helper';
 import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 const CarwashServicesSettings = ({ welfareId }) => {
@@ -42,7 +43,6 @@ const CarwashServicesSettings = ({ welfareId }) => {
             .then(() => setLoading(false));
     };
 
-
     const columns = [
         {
             title: 'عنوان',
@@ -51,8 +51,16 @@ const CarwashServicesSettings = ({ welfareId }) => {
         },
         {
             title: 'قیمت',
-            dataIndex: 'price',
             key: 'price',
+            // dataIndex: 'price',
+            // render: ({ price }) => {
+            //     return new Intl.NumberFormat('en-IN').format(
+            //         price.replace('-', '')
+            //     );
+            // },
+            render: ({ price }) => {
+                return formatNumber(price);
+            },
         },
         {
             title: 'شرح',

@@ -17,7 +17,7 @@ import {
 import notify from 'general/notify';
 import axios from 'axios';
 import Gallery from './Gallery';
-import { getWelfareName } from 'general/Helper';
+import { getWelfareName, formatNumber } from 'general/Helper';
 import { Link, Redirect } from 'react-router-dom';
 
 const { Option } = Select;
@@ -214,7 +214,7 @@ const Reserve = ({ match, history }) => {
         if (e.length) {
             setFinalStep(true);
             if (form.getFieldValue('rule')) {
-                setSubmitButtonDisabled(false);    
+                setSubmitButtonDisabled(false);
             }
         } else {
             setSubmitButtonDisabled(true);
@@ -401,7 +401,11 @@ const Reserve = ({ match, history }) => {
                                                 <Space>
                                                     {service.serviceName}
                                                     <span className="small-divider">
-                                                        ({service.price} تومان)
+                                                        (
+                                                        {formatNumber(
+                                                            service.price
+                                                        )}{' '}
+                                                        تومان)
                                                     </span>
                                                     <span className="small-divider">
                                                         {service.comment}
