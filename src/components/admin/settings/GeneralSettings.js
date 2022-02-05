@@ -21,6 +21,7 @@ const GeneralSettings = ({welfareId}) => {
 
 
     useEffect(() => {
+        form.resetFields()
         axios
             .post("WelfareSetting/GetLast", { welfareId })
             .then(({ data }) => {
