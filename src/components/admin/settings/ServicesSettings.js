@@ -52,12 +52,6 @@ const CarwashServicesSettings = ({ welfareId }) => {
         {
             title: 'قیمت',
             key: 'price',
-            // dataIndex: 'price',
-            // render: ({ price }) => {
-            //     return new Intl.NumberFormat('en-IN').format(
-            //         price.replace('-', '')
-            //     );
-            // },
             render: ({ price }) => {
                 return formatNumber(price);
             },
