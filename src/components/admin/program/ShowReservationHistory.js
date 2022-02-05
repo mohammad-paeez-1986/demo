@@ -141,7 +141,6 @@ const ShowReservationHistory = ({ match }) => {
             dataIndex: "namefa",
             key: "namefa",
         },
-
         {
             title: "کد کارمندی",
             dataIndex: "personelCode",
