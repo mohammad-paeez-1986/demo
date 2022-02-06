@@ -5,6 +5,8 @@ import axios from 'axios';
 import notify from 'general/notify';
 import SetDelayMinutes from 'components/common/reservation/SetDelayMinutes';
 import { usePaginate } from 'hooks/usePaginate';
+import ShowReservationServices from 'components/common/reservation/ShowReservationServices';
+import { PicRightOutlined } from '@ant-design/icons';
 
 const { Option } = Select;
 
@@ -15,6 +17,8 @@ const NextDayReservations = ({ match }) => {
     const [selectedReservationId, setSelectedReservationId] = useState(null);
     const { url } = match;
     const [welfareId, setWelfareId] = useState(null);
+    const [reservationId, setReservationId] = useState(null);
+    const [isServicesModalVisible, setIsServicesModalVisible] = useState(false);
 
     const {
         pageIndex,
@@ -26,9 +30,84 @@ const NextDayReservations = ({ match }) => {
         paginationData,
     } = usePaginate();
 
-    useEffect(() => {
-        const type = url.split('/')[1]?.toUpperCase();
+    // columns of table, and values
+    const columns = [
+        {
+            title: 'نام',
+            dataIndex: 'namefa',
+            key: 'namefa',
+        },
 
+        {
+            title: 'کد کارمندی',
+            dataIndex: 'personelCode',
+            key: 'personelCode',
+        },
+        {
+            title: 'تاریخ',
+            dataIndex: 'reservationDate',
+            key: 'reservationDate',
+        },
+        {
+            title: 'زمان برنامه',
+            dataIndex: 'dailyProgramShamsiDate',
+            key: 'dailyProgramShamsiDate',
+        },
+        {
+            title: 'زمان سانس',
+            key: 'reservationId',
+            render: ({ startTime, endTime }) => `${endTime} - ${startTime}`,
+        },
+
+        {
+            title: 'وضعیت',
+            render: ({ presenceStatus, reservationId }) => {
+                return (
+                    <Select
+                        style={{ width: 130 }}
+                        value={presenceStatus}
+                        onChange={(value) =>
+                            onReservationStatusChange(value, reservationId)
+                        }
+                        disabled={presenceStatus === 7}
+                    >
+                        <Option value={0}>در مرحله تائید رزرو</Option>
+                        <Option value={1}>تائید رزرو</Option>
+                        <Option value={2}>حضور</Option>
+                        <Option value={3}>غیبت</Option>
+                        <Option value={7} disabled>
+                            لغو توسط کاربر
+                        </Option>
+                        <Option value={8}>رد درخواست</Option>
+                        <Option value={9} disabled>
+                            لغو توسط سیستم
+                        </Option>
+                    </Select>
+                );
+            },
+        },
+    ];
+
+    const type = url.split('/')[1]?.toUpperCase();
+
+    if (type === 'CARWASH') {
+        columns.splice(4, 0, {
+            title: 'سرویس ها',
+            onCell: ({ reservationId }) => {
+                return {
+                    onClick: () => {
+                        setReservationId(reservationId);
+                        setIsServicesModalVisible(true);
+                    },
+                };
+            },
+            key: 'reservationId',
+            className: 'act-icon edit',
+            render: () => <PicRightOutlined style={{ fontSize: 18 }} />,
+        });
+    }
+
+    useEffect(() => {
         axios
             .post('Welfare/Get', { type })
             .then(({ data }) => {
@@ -169,80 +248,23 @@ const NextDayReservations = ({ match }) => {
         }
     };
 
-    // columns of table, and values
-    const columns = [
-        {
-            title: 'نام',
-            dataIndex: 'namefa',
-            key: 'namefa',
-        },
-
-        {
-            title: 'کد کارمندی',
-            dataIndex: 'personelCode',
-            key: 'personelCode',
-        },
-        {
-            title: 'تاریخ',
-            dataIndex: 'reservationDate',
-            key: 'reservationDate',
-        },
-        {
-            title: 'زمان برنامه',
-            dataIndex: 'dailyProgramShamsiDate',
-            key: 'dailyProgramShamsiDate',
-        },
-        {
-            title: 'زمان سانس',
-            key: 'reservationId',
-            render: ({ startTime, endTime }) => `${endTime} - ${startTime}`,
-        },
-
-        {
-            title: 'وضعیت',
-            render: ({ presenceStatus, reservationId }) => {
-                return (
-                    <Select
-                        style={{ width: 130 }}
-                        value={presenceStatus}
-                        onChange={(value) =>
-                            onReservationStatusChange(value, reservationId)
-                        }
-                        disabled={presenceStatus === 7}
-                    >
-                        <Option value={0}>در مرحله تائید رزرو</Option>
-                        <Option value={1}>تائید رزرو</Option>
-                        <Option value={2}>حضور</Option>
-                        <Option value={3}>غیبت</Option>
-                        <Option value={7} disabled>
-                            لغو توسط کاربر
-                        </Option>
-                        <Option value={8}>رد درخواست</Option>
-                        <Option value={9} disabled>
-                            لغو توسط سیستم
-                        </Option>
-                    </Select>
-                );
-            },
-        },
-
-        // {
-        //     title: "تایید",
-        //     className: "act-icon edit",
-        //     render: (record) => {
-        //         const active = record.userStatus === "فعال" ? true : false;
-        //         return (
-        //             <Switch
-        //                 size="small"
-        //                 checked={active}
-        //                 // onChange={(checked, e) =>
-        //                 //     onActivityChange(record, checked, e)
-        //                 // }
-        //             />
-        //         );
-        //     },
-        // },
-    ];
+    // {
+    //     title: "تایید",
+    //     className: "act-icon edit",
+    //     render: (record) => {
+    //         const active = record.userStatus === "فعال" ? true : false;
+    //         return (
+    //             <Switch
+    //                 size="small"
+    //                 checked={active}
+    //                 // onChange={(checked, e) =>
+    //                 //     onActivityChange(record, checked, e)
+    //                 // }
+    //             />
+    //         );
+    //     },
+    // },
+    // ];
 
     return (
         <div>
@@ -268,6 +290,16 @@ const NextDayReservations = ({ match }) => {
                     closeModal={closeModal}
                     reservationId={selectedReservationId}
                 />
+            </Modal>
+
+            <Modal
+                title="مشاهده سرویس ها"
+                visible={isServicesModalVisible}
+                footer={null}
+                destroyOnClose={true}
+                onCancel={() => setIsServicesModalVisible(false)}
+            >
+                <ShowReservationServices reservationId={reservationId} />
             </Modal>
         </div>
     );
