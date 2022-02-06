@@ -135,7 +135,7 @@ const Menus = ({ history }) => {
             case "calendar":
                 icon = <CalendarOutlined />;
                 break;
-            case "gettodayreservation":
+            case "operator":
                 icon = <CalendarOutlined />;
                 break;
             case "io":
