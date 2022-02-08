@@ -134,11 +134,12 @@ const HolidaysCalendar = ({ match }) => {
                             format={"YYYY/MM/DD"}
                             mapDays={({ date }) => {
                                     let props = {};
+                                    let isWeekend = date.weekDay.index === 6 || date.weekDay.index === 5 
 
                                     if (
                                         holidaysList.includes(
                                             getDateFromObject(date)
-                                        )
+                                        ) || isWeekend
                                     )
                                         return {
                                             disabled: true,

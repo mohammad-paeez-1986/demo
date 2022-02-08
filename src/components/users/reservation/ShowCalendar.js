@@ -1,36 +1,43 @@
-import { useState, useEffect } from "react";
-import persian from "react-date-object/calendars/persian";
-import persian_fa from "react-date-object/locales/persian_fa";
-import { Calendar } from "react-multi-date-picker";
-import {
-    Card,
-    Col,
-    Table,
-    Spin,
-} from "antd";
-import notify from "general/notify";
-import axios from "axios";
-import { getDateFromObject } from "general/Helper";
-import {
-    CloseOutlined,
-    CheckOutlined,
-} from "@ant-design/icons";
+import { useState, useEffect } from 'react';
+import persian from 'react-date-object/calendars/persian';
+import persian_fa from 'react-date-object/locales/persian_fa';
+import { Calendar } from 'react-multi-date-picker';
+import { Card, Col, Table, Spin } from 'antd';
+import notify from 'general/notify';
+import axios from 'axios';
+import { getDateFromObject } from 'general/Helper';
+import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
 
-const weekDays = ["ش", "ی", "د", "س", "چ", "پ", "ج"];
+const weekDays = ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج'];
 
 const ShowCalendar = ({ match }) => {
     const [date, setDate] = useState(null);
     const [loading, setLoading] = useState(false);
     const [selectedDayProgramList, setSelectedDayProgramList] = useState([]);
     const [welfareId, setWelfareId] = useState(null);
+    const [holidayList, setHolidayList] = useState([]);
+    const [holidaysList, setHolidaysList] = useState([]);
     const { url } = match;
 
     useEffect(() => {
-        setDate(null)
-        const type = url.split("/")[1]?.toUpperCase();
-        axios.post("Welfare/Get", { type }).then(({ data }) => {
+        setDate(null);
+        const type = url.split('/')[1]?.toUpperCase();
+        axios.post('Welfare/Get', { type }).then(({ data }) => {
             setWelfareId(data[0].id);
         });
+
+        axios
+            .post('Calendar/Get', {
+                shamsiDate: '0',
+                description: 'all',
+            })
+            .then(({ data }) => {
+                setHolidayList(data);
+                const holidaysList = data.map((item) => item.shamsiDate);
+                setHolidaysList(holidaysList);
+            })
+            .catch((errorMessage) => notify.error(errorMessage))
+            .then(() => setLoading(false));
     }, [url]);
 
     const onDayChange = (date, isObject = false) => {
@@ -44,7 +51,7 @@ const ShowCalendar = ({ match }) => {
 
         setLoading(true);
         axios
-            .post("DailyProgram/Get", {
+            .post('DailyProgram/Get', {
                 dateFrom: selectedDate,
                 dateTo: selectedDate,
                 welfare: welfareId,
@@ -58,13 +65,13 @@ const ShowCalendar = ({ match }) => {
 
     const columns = [
         {
-            title: "گنجایش",
-            dataIndex: "capacity",
-            key: "capacity",
+            title: 'گنجایش',
+            dataIndex: 'capacity',
+            key: 'capacity',
         },
         {
-            title: "وی آی پی",
-            key: "isVip",
+            title: 'وی آی پی',
+            key: 'isVip',
             render: (record) =>
                 record.isVip ? (
                     <CheckOutlined className="green" />
@@ -73,17 +80,17 @@ const ShowCalendar = ({ match }) => {
                 ),
         },
         {
-            title: "زمان سانس",
-            key: "id",
+            title: 'زمان سانس',
+            key: 'id',
             render: ({ startTime, endTime }) => `از ${startTime} تا ${endTime}`,
         },
         {
-            title: "جنیست",
-            dataIndex: "genderAcceptance",
-            key: "genderAcceptance",
+            title: 'جنیست',
+            dataIndex: 'genderAcceptance',
+            key: 'genderAcceptance',
         },
     ];
-    
+
     return (
         <Col sm={24} xs={24} md={19} lg={15} xlg={12}>
             <Spin delay={900} spinning={loading}>
@@ -95,7 +102,28 @@ const ShowCalendar = ({ match }) => {
                             calendarPosition="bottom-right"
                             weekDays={weekDays}
                             onChange={onDayChange}
-                            value={date} 
+                            value={date}
+                            mapDays={({ date }) => {
+                                let props = {};
+                                let isWeekend =
+                                    date.weekDay.index === 6 ||
+                                    date.weekDay.index === 5;
+
+                                if (
+                                    holidaysList.includes(
+                                        getDateFromObject(date)
+                                    ) ||
+                                    isWeekend
+                                )
+                                    return {
+                                        disabled: true,
+                                        style: { color: '#f30' },
+                                        onClick: () =>
+                                            notify.error(
+                                                'این روز تعطیل می  باشد'
+                                            ),
+                                    };
+                            }}
                         />
                     </div>
                     <br />

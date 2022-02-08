@@ -53,6 +53,7 @@ const AddDailyProgram = ({ match }) => {
 
     useEffect(() => {
         resetCopyBox();
+        
         const today = new DateObject({ calendar: persian, locale: persian_fa });
         const type = url.split('/')[1]?.toUpperCase();
         axios.post('Welfare/Get', { type }).then(({ data }) => {
@@ -66,6 +67,8 @@ const AddDailyProgram = ({ match }) => {
                 const holidaysList = data.map((item) => item.shamsiDate);
                 setHolidaysList(holidaysList);
             });
+
+       
     }, [url]);
 
     const onDayChange = (date, isObject = false, sentWelfareId = false) => {
@@ -237,8 +240,9 @@ const AddDailyProgram = ({ match }) => {
                         format={'YYYY/MM/DD'}
                         mapDays={({ date }) => {
                             let props = {};
+                            let isWeekend = date.weekDay.index === 6 || date.weekDay.index === 5 
 
-                            if (holidaysList.includes(getDateFromObject(date)))
+                            if (holidaysList.includes(getDateFromObject(date)) || isWeekend)
                                 return {
                                     disabled: true,
                                     style: { color: '#f30' },
