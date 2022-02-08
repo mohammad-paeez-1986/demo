@@ -53,7 +53,7 @@ const AddDailyProgram = ({ match }) => {
 
     useEffect(() => {
         resetCopyBox();
-        
+
         const today = new DateObject({ calendar: persian, locale: persian_fa });
         const type = url.split('/')[1]?.toUpperCase();
         axios.post('Welfare/Get', { type }).then(({ data }) => {
@@ -68,12 +68,17 @@ const AddDailyProgram = ({ match }) => {
                 setHolidaysList(holidaysList);
             });
 
-       
+        return () => {
+            setIsSelectingDays(false);
+            console.log(copyDaysList);
+        };
     }, [url]);
 
     const onDayChange = (date, isObject = false, sentWelfareId = false) => {
         const validWelfareId = !sentWelfareId ? welfareId : sentWelfareId;
+
         setSelectedDayProgramList([]);
+
         let selectedDate;
         if (!isObject) {
             selectedDate = getDateFromObject(date);
@@ -82,12 +87,15 @@ const AddDailyProgram = ({ match }) => {
             selectedDate = date;
         }
 
-        if (isSelectingDays) {
-            copyProgram(null, selectedDate);
-            return;
+        if (!sentWelfareId) {
+            if (isSelectingDays) {
+                copyProgram(null, selectedDate);
+                return;
+            }
         }
 
         setLoading(true);
+
         axios
             .post('Reservation/GetReservable', {
                 dateFrom: selectedDate,
@@ -240,9 +248,16 @@ const AddDailyProgram = ({ match }) => {
                         format={'YYYY/MM/DD'}
                         mapDays={({ date }) => {
                             let props = {};
-                            let isWeekend = date.weekDay.index === 6 || date.weekDay.index === 5 
+                            let isWeekend =
+                                date.weekDay.index === 6 ||
+                                date.weekDay.index === 5;
 
-                            if (holidaysList.includes(getDateFromObject(date)) || isWeekend)
+                            if (
+                                holidaysList.includes(
+                                    getDateFromObject(date)
+                                ) ||
+                                isWeekend
+                            )
                                 return {
                                     disabled: true,
                                     style: { color: '#f30' },
