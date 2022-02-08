@@ -53,6 +53,7 @@ const Reserve = ({ match, history }) => {
         setSubmitButtonDisabled(true);
         setFinalStep(false);
         setWelfareType(null);
+        setServiceList([])
 
         form.resetFields();
         const type = url.split('/')[1]?.toUpperCase();
@@ -192,6 +193,10 @@ const Reserve = ({ match, history }) => {
     const onFinish = (values) => {
         delete values.day;
         delete values.rule;
+
+        if (!values.servicesId) {
+            values.servicesId = []
+        }
 
         axios
             .post('Reservation/New', values)
