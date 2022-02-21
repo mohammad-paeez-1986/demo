@@ -1,5 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import { Row, Card, Col, Form, Input, Spin, Button, Table, Select } from 'antd';
+import {
+    Row,
+    Card,
+    Col,
+    Form,
+    Input,
+    Spin,
+    Button,
+    Table,
+    Select,
+    Modal,
+} from 'antd';
 import notify from 'general/notify';
 import axios from 'axios';
 import DatePicker from 'react-multi-date-picker';
@@ -7,8 +18,13 @@ import TimePicker from 'react-multi-date-picker/plugins/time_picker';
 import persian from 'react-date-object/calendars/persian';
 import persian_fa from 'react-date-object/locales/persian_fa';
 import { getDateFromObject } from 'general/Helper';
-import { CloseOutlined, CheckOutlined } from '@ant-design/icons';
+import {
+    CloseOutlined,
+    CheckOutlined,
+    PicRightOutlined,
+} from '@ant-design/icons';
 import { usePaginate } from 'hooks/usePaginate';
+import ShowReservationServices from 'components/common/reservation/ShowReservationServices';
 
 const weekDays = ['ش', 'ی', 'د', 'س', 'چ', 'پ', 'ج'];
 
@@ -22,6 +38,8 @@ const ShowReservationReport = () => {
     const [reservationList, setReservationList] = useState([]);
     const [isFirstRequestSent, setIsFirstRequestSent] = useState(false);
     const [formOutput, setFormOutput] = useState({});
+    const [reservationId, setReservationId] = useState(null);
+    const [isServicesModalVisible, setIsServicesModalVisible] = useState(false);
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -43,7 +61,6 @@ const ShowReservationReport = () => {
             dataIndex: 'namefa',
             key: 'namefa',
         },
-
         {
             title: 'کد کارمندی',
             dataIndex: 'personelCode',
@@ -69,7 +86,6 @@ const ShowReservationReport = () => {
             dataIndex: 'statusReserve',
             key: 'statusReserve',
         },
-
         {
             title: 'وی آی پی',
             key: 'isVip',
@@ -80,6 +96,20 @@ const ShowReservationReport = () => {
                 ) : (
                     <CloseOutlined className="red" />
                 ),
+        },
+        {
+            title: 'سرویس ها',
+            onCell: ({ reservationId }) => {
+                return {
+                    onClick: () => {
+                        setReservationId(reservationId);
+                        setIsServicesModalVisible(true);
+                    },
+                };
+            },
+            key: 'reservationId',
+            className: 'act-icon edit',
+            render: () => <PicRightOutlined style={{ fontSize: 18 }} />,
         },
     ];
 
@@ -98,6 +128,10 @@ const ShowReservationReport = () => {
 
         if (values.dateTo) {
             values.dateTo = getDateFromObject(values.dateTo);
+            if (values.dateTo < values.dateFrom) {
+                notify.error('تاریخ پایان نمیتواند قبل از تاریخ شروع باشد');
+                return;
+            }
         }
 
         setFormOutput(values);
@@ -285,6 +319,15 @@ const ShowReservationReport = () => {
                     />
                 </Card>
             )}
+            <Modal
+                title="مشاهده سرویس ها"
+                visible={isServicesModalVisible}
+                footer={null}
+                destroyOnClose={true}
+                onCancel={() => setIsServicesModalVisible(false)}
+            >
+                <ShowReservationServices reservationId={reservationId} />
+            </Modal>
         </div>
     );
 };
