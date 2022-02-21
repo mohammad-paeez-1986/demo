@@ -47,7 +47,6 @@ const TodayReservations = ({ match }) => {
                 key: 'reservationId',
                 render: ({ startTime, endTime }) => `${endTime} - ${startTime}`,
             },
-
             {
                 title: 'وضعیت',
                 render: ({ presenceStatus, reservationId }) => {
