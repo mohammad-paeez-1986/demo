@@ -171,7 +171,7 @@ const routes = [
         component: TodayReservations,
     },
     {
-        path: "/getReservationReportForOperatot",
+        path: "/operator/report",
         exact: true,
         component: ShowReservationReportForOperator,
     },
