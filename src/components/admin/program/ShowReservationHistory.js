@@ -46,6 +46,11 @@ const ShowReservationHistory = ({ match }) => {
         values.dateFrom = getDateFromObject(values.dateFrom);
         values.dateTo = getDateFromObject(values.dateTo);
 
+        if (values.dateTo < values.dateFrom) {
+            notify.error('تاریخ پایان نمیتواند قبل از تاریخ شروع باشد');
+            return;
+        }
+
         setLoading(true);
         axios
             .post('/User/GetUserHistory', { pageIndex, pageSize, ...values })
