@@ -26,11 +26,15 @@ const TodayReservations = ({ match }) => {
                 dataIndex: 'namefa',
                 key: 'namefa',
             },
-
             {
                 title: 'کد کارمندی',
                 dataIndex: 'personelCode',
                 key: 'personelCode',
+            },
+            {
+                title: 'شماره همراه',
+                dataIndex: 'mobile',
+                key: 'mobile',
             },
             {
                 title: 'تاریخ',
