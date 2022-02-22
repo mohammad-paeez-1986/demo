@@ -67,6 +67,11 @@ const ShowReservationReport = () => {
             key: 'personelCode',
         },
         {
+            title: 'شماره همراه',
+            dataIndex: 'mobile',
+            key: 'mobile',
+        },
+        {
             title: 'بخش',
             dataIndex: 'welfarenamefa',
             key: 'welfarenamefa',

@@ -50,11 +50,15 @@ const ShowReservationReportForOperator = () => {
                 dataIndex: 'namefa',
                 key: 'namefa',
             },
-
             {
                 title: 'کد کارمندی',
                 dataIndex: 'personelCode',
                 key: 'personelCode',
+            },
+            {
+                title: 'شماره همراه',
+                dataIndex: 'mobile',
+                key: 'mobile',
             },
             {
                 title: 'بخش',
@@ -102,7 +106,7 @@ const ShowReservationReportForOperator = () => {
                 setFilterPartloading(false);
 
                 const { welfareId } = res[2].data[0];
-                
+
                 if (welfareId === 3) {
                     columnsArray.splice(4, 0, {
                         title: 'سرویس ها',
