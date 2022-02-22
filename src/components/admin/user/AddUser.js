@@ -1,12 +1,8 @@
-import React, { useState, useEffect } from "react";
-import { Card, Col, Form, Input, Spin, Button, Select, Radio } from "antd";
-import axios from "axios";
-import notify from "general/notify";
-import {
-    getNumeric,
-    isMobile,
-    isNationalCode,
-} from "general/Helper";
+import React, { useState, useEffect } from 'react';
+import { Card, Col, Form, Input, Spin, Button, Select, Radio } from 'antd';
+import axios from 'axios';
+import notify from 'general/notify';
+import { getNumeric, isMobile, isNationalCode } from 'general/Helper';
 
 const { Option } = Select;
 
@@ -23,9 +19,9 @@ const AddUser = () => {
     useEffect(() => {
         axios
             .all([
-                axios.post("Department/Get"),
-                axios.post("Workgroup/Get"),
-                axios.post("User/GetRoles"),
+                axios.post('Department/Get'),
+                axios.post('Workgroup/Get'),
+                axios.post('User/GetRoles'),
             ])
             .then((res) => {
                 setDepartmentList(res[0].data);
@@ -47,7 +43,7 @@ const AddUser = () => {
         data.PersonelInfo = values;
         setLoading(true);
         axios
-            .post("User/NewUserPersonel", data)
+            .post('User/NewUserPersonel', data)
             .then(({ message }) => {
                 notify.success(message);
 
@@ -65,7 +61,7 @@ const AddUser = () => {
 
             if (!welfareList.length) {
                 axios
-                    .post("Welfare/Get", { type: null })
+                    .post('Welfare/Get', { type: null })
                     .then(({ data }) => {
                         setWelfareList(data);
                     })
@@ -127,7 +123,22 @@ const AddUser = () => {
                             label="دپارتمان"
                             rules={[{ required: true }]}
                         >
-                            <Select>
+                            <Select
+                                showSearch
+                                optionFilterProp="children"
+                                filterOption={(input, option) =>
+                                    option.children
+                                        .toLowerCase()
+                                        .indexOf(input.toLowerCase()) >= 0
+                                }
+                                filterSort={(optionA, optionB) =>
+                                    optionA.children
+                                        .toLowerCase()
+                                        .localeCompare(
+                                            optionB.children.toLowerCase()
+                                        )
+                                }
+                            >
                                 {departmentList.map(({ id, nameFa }) => (
                                     <Option value={id}>{nameFa}</Option>
                                 ))}
@@ -139,7 +150,22 @@ const AddUser = () => {
                             label="کارگروه"
                             rules={[{ required: true }]}
                         >
-                            <Select>
+                            <Select
+                                showSearch
+                                optionFilterProp="children"
+                                filterOption={(input, option) =>
+                                    option.children
+                                        .toLowerCase()
+                                        .indexOf(input.toLowerCase()) >= 0
+                                }
+                                filterSort={(optionA, optionB) =>
+                                    optionA.children
+                                        .toLowerCase()
+                                        .localeCompare(
+                                            optionB.children.toLowerCase()
+                                        )
+                                }
+                            >
                                 {workGroupList.map(({ id, nameFa }) => (
                                     <Option value={id}>{nameFa}</Option>
                                 ))}
@@ -197,7 +223,7 @@ const AddUser = () => {
                                             return Promise.resolve();
                                         } else {
                                             return Promise.reject(
-                                                "کد ملی معتبر نیست"
+                                                'کد ملی معتبر نیست'
                                             );
                                         }
                                     },
@@ -220,7 +246,7 @@ const AddUser = () => {
                                             return Promise.resolve();
                                         } else {
                                             return Promise.reject(
-                                                "شماره همراه معتبر نیست"
+                                                'شماره همراه معتبر نیست'
                                             );
                                         }
                                     },
@@ -242,7 +268,7 @@ const AddUser = () => {
                         <Form.Item
                             name="email"
                             label="رایانامه"
-                            rules={[{ required: true, type: "email" }]}
+                            rules={[{ required: true, type: 'email' }]}
                         >
                             <Input className="ltr" />
                         </Form.Item>
@@ -264,7 +290,7 @@ const AddUser = () => {
                             label="رمز عبور"
                             rules={[{ required: true }]}
                         >
-                            <Input.Password className="ltr"/>
+                            <Input.Password className="ltr" />
                         </Form.Item>
 
                         <div className="ant-card-footer">

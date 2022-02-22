@@ -124,7 +124,20 @@ const UpdateUser = ({ userId }) => {
                     label="دپارتمان"
                     rules={[{ required: true }]}
                 >
-                    <Select>
+                    <Select showSearch
+                                optionFilterProp="children"
+                                filterOption={(input, option) =>
+                                    option.children
+                                        .toLowerCase()
+                                        .indexOf(input.toLowerCase()) >= 0
+                                }
+                                filterSort={(optionA, optionB) =>
+                                    optionA.children
+                                        .toLowerCase()
+                                        .localeCompare(
+                                            optionB.children.toLowerCase()
+                                        )
+                                }>
                         {departmentList?.map(({ id, nameFa }) => (
                             <Option value={id}>{nameFa}</Option>
                         ))}
@@ -136,7 +149,20 @@ const UpdateUser = ({ userId }) => {
                     label="کارگروه"
                     rules={[{ required: true }]}
                 >
-                    <Select>
+                    <Select showSearch
+                                optionFilterProp="children"
+                                filterOption={(input, option) =>
+                                    option.children
+                                        .toLowerCase()
+                                        .indexOf(input.toLowerCase()) >= 0
+                                }
+                                filterSort={(optionA, optionB) =>
+                                    optionA.children
+                                        .toLowerCase()
+                                        .localeCompare(
+                                            optionB.children.toLowerCase()
+                                        )
+                                }>
                         {workGroupList.map(({ id, nameFa }) => (
                             <Option value={id}>{nameFa}</Option>
                         ))}
