@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Redirect, Route } from 'react-router-dom';
-import Panel from 'components/common/panel/Panel';
+// import Panel from 'components/common/panel/Panel';
 import { useCookies } from 'react-cookie';
 
 const ProtectedOfAuthed = (props) => {

@@ -37,7 +37,7 @@ const TodayReservations = ({ match }) => {
                 key: 'mobile',
             },
             {
-                title: 'تاریخ',
+                title: 'تاریخ ثبت',
                 dataIndex: 'reservationDate',
                 key: 'reservationDate',
             },
@@ -51,6 +51,7 @@ const TodayReservations = ({ match }) => {
                 key: 'reservationId',
                 render: ({ startTime, endTime }) => `${endTime} - ${startTime}`,
             },
+
             {
                 title: 'وضعیت',
                 render: ({ presenceStatus, reservationId }) => {
@@ -106,6 +107,25 @@ const TodayReservations = ({ match }) => {
                         render: () => (
                             <PicRightOutlined style={{ fontSize: 18 }} />
                         ),
+                    });
+                } else if (welfareId === 4 || welfareId === 2) {
+                    columnsArray.splice(4, 0, {
+                        title: 'تعداد همراه',
+                        key: 'reservationId',
+                        dataIndex: 'companions',
+                    });
+
+                    columnsArray.splice(4, 0, {
+                        title: welfareId === 4 ? 'عنوان میز' : 'عنوان اتاق',
+                        key: 'reservationId',
+                        dataIndex: 'welfareClusterNameFa',
+                    });
+                }
+
+                if (welfareId === 5 ){
+                    columnsArray.splice(3, 0, {
+                        title: 'نام مشاور',
+                        dataIndex: 'welfareClusterNameFa',
                     });
                 }
             })
@@ -165,7 +185,7 @@ const TodayReservations = ({ match }) => {
 
     return (
         <div>
-            <Card title="لیست رزروهای امروز">
+            <Card title='لیست رزروها'>
                 <Table
                     bordered
                     columns={columns}
@@ -178,7 +198,7 @@ const TodayReservations = ({ match }) => {
                 />
             </Card>
             <Modal
-                title="حضور"
+                title='حضور'
                 visible={isModalVisible}
                 footer={null}
                 destroyOnClose={true}
@@ -191,7 +211,7 @@ const TodayReservations = ({ match }) => {
                 />
             </Modal>
             <Modal
-                title="مشاهده سرویس ها"
+                title='مشاهده سرویس ها'
                 visible={isServicesModalVisible}
                 footer={null}
                 destroyOnClose={true}

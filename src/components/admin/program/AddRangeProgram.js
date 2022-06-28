@@ -160,7 +160,7 @@ const AddRangeProgram = ({ match }) => {
 
             <Form.Item name="gender" label="جنسیت" rules={[{ required: true }]}>
                 <Select>
-                    {welfareId !== 1 && <Option value={2}>هردو</Option>}
+                    {welfareId !== 1 && <Option value={2}>هر دو</Option>}
                     <Option value={0}>خانم</Option>
                     <Option value={1}>آقا</Option>
                 </Select>

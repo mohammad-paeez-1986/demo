@@ -70,7 +70,6 @@ const AddDailyProgram = ({ match }) => {
 
         return () => {
             setIsSelectingDays(false);
-            console.log(copyDaysList);
         };
     }, [url]);
 

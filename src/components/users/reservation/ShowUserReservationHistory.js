@@ -49,7 +49,11 @@ const ShowUserReservationHistory = ({ match }) => {
                 let newHistoryList;
                 newHistoryList = historyList.map((item) => {
                     if (item.reservationId === reservationId) {
-                        return { ...item, presenceStatus: 3 };
+                        return {
+                            ...item,
+                            presenceStatus: 7,
+                            statusReserve: 'لغو توسط کاربر',
+                        };
                     } else {
                         return item;
                     }
@@ -78,9 +82,9 @@ const ShowUserReservationHistory = ({ match }) => {
             className: 'edit',
             render: (record) =>
                 record.isVip ? (
-                    <CheckOutlined className="green" />
+                    <CheckOutlined className='green' />
                 ) : (
-                    <CloseOutlined className="red" />
+                    <CloseOutlined className='red' />
                 ),
         },
         {
@@ -94,7 +98,7 @@ const ShowUserReservationHistory = ({ match }) => {
             render: ({ reservationId, presenceStatus }) =>
                 presenceStatus === 0 || presenceStatus === 1 ? (
                     <Popconfirm
-                        title="مطمئن هستید؟"
+                        title='مطمئن هستید؟'
                         onConfirm={() => onCancelConfirm(reservationId)}
                     >
                         <CloseSquareOutlined />
@@ -221,7 +225,7 @@ const ShowUserReservationHistory = ({ match }) => {
                 </Row>
             </Card> */}
 
-            <Card title="مشاهده تاریخچه">
+            <Card title='مشاهده تاریخچه'>
                 <Table
                     bordered
                     columns={columns}
@@ -235,7 +239,7 @@ const ShowUserReservationHistory = ({ match }) => {
             </Card>
 
             <Modal
-                title="مشاهده سرویس ها"
+                title='مشاهده سرویس ها'
                 visible={isModalVisible}
                 footer={null}
                 destroyOnClose={true}

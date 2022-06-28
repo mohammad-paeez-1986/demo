@@ -1,17 +1,13 @@
-import React, { useState, useEffect } from "react";
-import {
-    Button,
-    Table,
-    Modal,
-} from "antd";
-import notify from "general/notify";
-import { FormOutlined, CloseOutlined, CheckOutlined } from "@ant-design/icons";
-import AddCluster from "./AddCluster";
-import UpdateCluster from "./UpdateCluster";
-import { useLocation } from "react-router-dom";
-import axios from "axios"
+import React, { useState, useEffect } from 'react';
+import { Button, Table, Modal } from 'antd';
+import notify from 'general/notify';
+import { FormOutlined, CloseOutlined, CheckOutlined } from '@ant-design/icons';
+import AddCluster from './AddCluster';
+import UpdateCluster from './UpdateCluster';
+import { useLocation } from 'react-router-dom';
+import axios from 'axios';
 
-const ClusterSettings = ({welfareId}) => {
+const ClusterSettings = ({ welfareId }) => {
     // states
     const [refresh, setRefresh] = useState(false);
     const [isAddModalVisible, setIsAddModalVisible] = useState(false);
@@ -19,6 +15,7 @@ const ClusterSettings = ({welfareId}) => {
     const [selectedData, setSelectedData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [welfareClusterList, setWelfareClusterList] = useState([]);
+    const [columns, setColumns] = useState([]);
 
     const { pathname: url } = useLocation();
 
@@ -26,15 +23,93 @@ const ClusterSettings = ({welfareId}) => {
         setRefresh(!refresh);
     };
 
+    const columnsArray = [
+        {
+            title: 'نام',
+            dataIndex: 'clusterFa',
+            key: 'clusterFa',
+        },
+        {
+            title: 'گنجایش',
+            dataIndex: 'clusterCapacity',
+            key: 'clusterCapacity',
+        },
+        {
+            title: 'فعال',
+            key: 'clusterLock',
+            className: 'edit',
+            render: (record) =>
+                !record.clusterLock ? (
+                    <CheckOutlined className='green' />
+                ) : (
+                    <CloseOutlined className='red' />
+                ),
+        },
+        {
+            title: 'وی آی پی',
+            key: 'clusterVip',
+            className: 'edit',
+            render: (record) =>
+                record.clusterVip ? (
+                    <CheckOutlined className='green' />
+                ) : (
+                    <CloseOutlined className='red' />
+                ),
+        },
+
+        {
+            title: 'ویرایش',
+            className: 'act-icon edit',
+            onCell: ({
+                welfareclusterId,
+                clusterFa,
+                clusterEn,
+                clusterCapacity,
+                clusterVip,
+                clusterLock,
+                genderAcceptanceClusterCode,
+            }) => {
+                return {
+                    onClick: () => {
+                        setIsUpdateModalVisible(true);
+                        setSelectedData({
+                            clusterId: welfareclusterId,
+                            nameFa: clusterFa,
+                            nameEn: clusterEn,
+                            capacity: clusterCapacity,
+                            isVip: clusterVip,
+                            isLocked: clusterLock,
+                            genderAcceptanceClusterCode,
+                            welfareId,
+                        });
+                    },
+                };
+            },
+            render: () => <FormOutlined />,
+        },
+    ];
+
     useEffect(() => {
-        const type = url.split("/")[1]?.toUpperCase();
-        axios.post("WelfareCluster/Get", { welfareType: type })
+        const type = url.split('/')[1]?.toUpperCase();
+        axios
+            .post('WelfareCluster/Get', { welfareType: type })
             .then(({ data }) => {
                 setWelfareClusterList(data);
+
+                if (welfareId === 4 || welfareId === 5) {
+                    columnsArray.splice(4, 0, {
+                        title: 'خانم/آقا',
+                        dataIndex: 'genderAcceptanceCluster',
+                        key: 'genderAcceptanceCluster',
+                    });
+                }
+
+                setColumns(columnsArray);
             })
+
             .catch((errorMessage) => notify.error(errorMessage))
             .then(() => setLoading(false));
-    }, [refresh, url]);
+    }, [refresh, url, welfareId]);
 
     // const {
     //     dataList: welfareClusterList,
@@ -58,106 +133,29 @@ const ClusterSettings = ({welfareId}) => {
     //     });
     // };
 
-    const columns = [
-        {
-            title: "نام",
-            dataIndex: "clusterFa",
-            key: "clusterFa",
-        },
-        {
-            title: "گنجایش",
-            dataIndex: "clusterCapacity",
-            key: "clusterCapacity",
-        },
-        {
-            title: "فعال",
-            key: "clusterLock",
-            className: "edit",
-            render: (record) =>
-                !record.clusterLock ? (
-                    <CheckOutlined className="green" />
-                ) : (
-                    <CloseOutlined className="red" />
-                ),
-        },
-        {
-            title: "وی آی پی",
-            key: "clusterVip",
-            className: "edit",
-            render: (record) =>
-                record.clusterVip ? (
-                    <CheckOutlined className="green" />
-                ) : (
-                    <CloseOutlined className="red" />
-                ),
-        },
-        // {
-        //     title: "خانم/آقا",
-        //     dataIndex: "genderAcceptance",
-        //     key: "genderAcceptance",
-        // },
-        // {
-        //     title: "آدرس",
-        //     dataIndex: "address",
-        //     key: "address",
-        // },
-        // {
-        //     title: "تلفن",
-        //     dataIndex: "tel",
-        //     key: "tel",
-        // },
-        {
-            title: "ویرایش",
-            className: "act-icon edit",
-            onCell: ({
-                welfareclusterId,
-                clusterFa,
-                clusterEn,
-                clusterCapacity,
-                clusterVip,
-                clusterLock,
-            }) => {
-                return {
-                    onClick: () => {
-                        setIsUpdateModalVisible(true);
-                        setSelectedData({
-                            clusterId: welfareclusterId,
-                            nameFa: clusterFa,
-                            nameEn: clusterEn,
-                            capacity: clusterCapacity,
-                            isVip: clusterVip,
-                            isLocked: clusterLock,
-                        });
-                    },
-                };
-            },
-            render: () => <FormOutlined />,
-        },
-    ];
-
     const showModal = (name) => {
-        if (name === "add") {
+        if (name === 'add') {
             setIsAddModalVisible(true);
-        } else if (name === "update") {
+        } else if (name === 'update') {
             setIsUpdateModalVisible(true);
         }
     };
 
     const handleModalClose = (name) => {
-        if (name === "add") {
+        if (name === 'add') {
             setIsAddModalVisible(false);
-        } else if (name === "update") {
+        } else if (name === 'update') {
             setIsUpdateModalVisible(false);
         }
     };
 
     return (
         <div>
-            <div className="add-button-top">
+            <div className='add-button-top'>
                 <Button
-                    type="default"
-                    size="small"
-                    onClick={() => showModal("add")}
+                    type='default'
+                    size='small'
+                    onClick={() => showModal('add')}
                 >
                     افزودن مورد جدید
                 </Button>
@@ -168,7 +166,6 @@ const ClusterSettings = ({welfareId}) => {
                 columns={columns}
                 pagination={{
                     hideOnSinglePage: true,
-                    // pageSize:10
                 }}
                 dataSource={welfareClusterList}
                 loading={loading}
@@ -176,11 +173,11 @@ const ClusterSettings = ({welfareId}) => {
             />
 
             <Modal
-                title="افزودن مورد جدید"
+                title='افزودن مورد جدید'
                 visible={isAddModalVisible}
                 footer={null}
                 destroyOnClose={true}
-                onCancel={() => handleModalClose("add")}
+                onCancel={() => handleModalClose('add')}
             >
                 <AddCluster
                     refreshList={onSetRefresh}
@@ -190,11 +187,11 @@ const ClusterSettings = ({welfareId}) => {
             </Modal>
 
             <Modal
-                title="ویرایش"
+                title='ویرایش'
                 visible={isUpdateModalVisible}
                 footer={null}
                 destroyOnClose={true}
-                onCancel={() => handleModalClose("update")}
+                onCancel={() => handleModalClose('update')}
             >
                 <UpdateCluster
                     closeModal={handleModalClose}

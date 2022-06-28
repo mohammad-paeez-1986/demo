@@ -268,7 +268,7 @@ const NextDayReservations = ({ match }) => {
 
     return (
         <div>
-            <Card title="لیست رزروهای روز آتی">
+            <Card title="لیست رزروها">
                 <Table
                     bordered
                     columns={columns}

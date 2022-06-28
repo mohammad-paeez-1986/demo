@@ -14,7 +14,8 @@ import {
     TrophyOutlined,
     LogoutOutlined,
     WindowsOutlined,
-    FileImageOutlined
+    FileImageOutlined,
+    ReconciliationOutlined
 } from "@ant-design/icons";
 import axios from "axios";
 
@@ -140,6 +141,12 @@ const Menus = ({ history }) => {
                 break;
             case "io":
                 icon = <FileImageOutlined />;
+                break;
+            case "gettodayreservation":
+                icon = <CalendarOutlined />;
+                break;
+            case "clinic":
+                icon = <ReconciliationOutlined />
                 break;
             case "signout":
                 icon = <LogoutOutlined />;

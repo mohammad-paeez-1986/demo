@@ -1,8 +1,10 @@
-import React, { useState } from "react";
-import { Form, Input, Spin, Button, Checkbox } from "antd";
-import notify from "general/notify";
-import axios from "axios";
-import { getNumeric } from "general/Helper";
+import React, { useState } from 'react';
+import { Form, Input, Spin, Button, Checkbox, Select } from 'antd';
+import notify from 'general/notify';
+import axios from 'axios';
+import { getNumeric } from 'general/Helper';
+
+const { Option } = Select;
 
 const UpdateCluster = ({
     selectedData: clusterData,
@@ -16,12 +18,12 @@ const UpdateCluster = ({
         values.clusterId = clusterData.clusterId;
         values.isLocked = !values.isLocked;
         axios
-            .post("/WelfareCluster/Modify", values)
+            .post('/WelfareCluster/Modify', values)
             .then(({ message }) => {
                 setLoading(false);
                 notify.success(message);
                 refreshList();
-                closeModal("update");
+                closeModal('update');
             })
             .catch((errorMessage) => notify.error(errorMessage));
     };
@@ -38,52 +40,71 @@ const UpdateCluster = ({
                     capacity: clusterData.capacity,
                     isLocked: !clusterData.isLocked,
                     isVip: clusterData.isVip,
+                    genderAcceptanceClusterCode:
+                        clusterData.genderAcceptanceClusterCode,
                 }}
             >
                 <Form.Item
-                    name="nameFa"
-                    label="نام پارسی"
+                    name='nameFa'
+                    label='نام پارسی'
                     rules={[{ required: true }]}
                 >
                     <Input />
                 </Form.Item>
                 <Form.Item
-                    name="nameEn"
-                    label="نام لاتین"
+                    name='nameEn'
+                    label='نام لاتین'
                     rules={[{ required: true }]}
                 >
-                    <Input className="ltr" />
+                    <Input className='ltr' />
                 </Form.Item>
                 <Form.Item
-                    name="capacity"
-                    label="گنجایش"
+                    name='capacity'
+                    label='گنجایش'
                     rules={[{ required: true }]}
                     normalize={(val) => getNumeric(val)}
                 >
                     <Input
-                        suffix={<span className="form-postfix-text">نفر</span>}
+
+                        suffix={<span className='form-postfix-text'>نفر</span>}
                         maxLength={5}
                     />
                 </Form.Item>
 
-                <Form.Item name="isLocked" label="فعال" valuePropName="checked">
+                {(clusterData.welfareId === 4 || clusterData.welfareId === 5) ? (
+                    <Form.Item
+                        name='genderAcceptanceClusterCode'
+                        label='جنسیت'
+                        rules={[{ required: true }]}
+                    >
+                        <Select>
+                            <Option value={2}>هر دو</Option>
+                            <Option value={0}>خانم</Option>
+                            <Option value={1}>آقا</Option>
+                        </Select>
+                    </Form.Item>
+                ) : (
+                    ''
+                )}
+
+                <Form.Item name='isLocked' label='فعال' valuePropName='checked'>
                     <Checkbox></Checkbox>
                 </Form.Item>
 
                 <Form.Item
-                    name="isVip"
-                    label="وی آی پی"
-                    valuePropName="checked"
+                    name='isVip'
+                    label='وی آی پی'
+                    valuePropName='checked'
                 >
                     <Checkbox></Checkbox>
                 </Form.Item>
 
-                <div className="ant-card-modal-footer">
+                <div className='ant-card-modal-footer'>
                     <Form.Item>
                         <Button
-                            type="primary"
-                            htmlType="submit"
-                            className="wide-button"
+                            type='primary'
+                            htmlType='submit'
+                            className='wide-button'
                         >
                             ویرایش
                         </Button>

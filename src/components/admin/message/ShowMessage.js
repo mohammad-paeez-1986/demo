@@ -1,18 +1,9 @@
-import React, { useState, useEffect } from "react";
-import {
-    Spin,
-    List,
-    Button,
-    Card,
-    Switch,
-    Badge,
-    Col,
-    Modal,
-} from "antd";
-import axios from "axios";
-import UpdateMessage from "./UpdateMessage";
-import { getUriAndMessageType } from "general/Helper";
-import notify from "general/notify";
+import React, { useState, useEffect } from 'react';
+import { Spin, List, Button, Card, Switch, Badge, Col, Modal } from 'antd';
+import axios from 'axios';
+import UpdateMessage from './UpdateMessage';
+import { getUriAndMessageType } from 'general/Helper';
+import notify from 'general/notify';
 
 const ShowMessage = ({ match }) => {
     const [messageList, setMessageList] = useState([]);
@@ -23,7 +14,7 @@ const ShowMessage = ({ match }) => {
 
     // get path
     const { path } = match;
-    const pathArray = path.split("/");
+    const pathArray = path.split('/');
 
     // get type and welfareName from path
     const type = pathArray[1];
@@ -33,25 +24,29 @@ const ShowMessage = ({ match }) => {
     const getWelfareInfo = (welfareName) => {
         let welfareId, welfareNameFa;
         switch (welfareName) {
-            case "gym":
+            case 'gym':
                 welfareId = 1;
-                welfareNameFa = "باشگاه";
+                welfareNameFa = 'باشگاه';
                 break;
-            case "room":
+            case 'room':
                 welfareId = 2;
-                welfareNameFa = "اتاق جلسات";
+                welfareNameFa = 'اتاق جلسات';
                 break;
-            case "carwash":
+            case 'carwash':
                 welfareId = 3;
-                welfareNameFa = "کارواش";
+                welfareNameFa = 'کارواش';
                 break;
-            case "cafe":
+            case 'cafe':
                 welfareId = 4;
-                welfareNameFa = "کافه";
+                welfareNameFa = 'کافه';
                 break;
-            case "public":
+            case 'clinic':
+                welfareId = 5;
+                welfareNameFa = 'کلینیک منابع انسانی';
+                break;
+            case 'public':
                 welfareId = 0;
-                welfareNameFa = "عمومی";
+                welfareNameFa = 'عمومی';
                 break;
         }
 
@@ -75,13 +70,14 @@ const ShowMessage = ({ match }) => {
         // });
 
         // setMessageList(newMessageList);
-        firstTime()
+        firstTime();
     };
 
     const firstTime = () => {
         const { uri, messageType } = getUriAndMessageType(type);
         setMessageType(messageType);
         setLoading(true);
+
 
         const isPublic = welfareId === 0 ? true : false;
 
@@ -96,7 +92,7 @@ const ShowMessage = ({ match }) => {
             });
 
         window.scrollTo(0, 0);
-    }
+    };
 
     useEffect(() => {
         firstTime();
@@ -107,7 +103,7 @@ const ShowMessage = ({ match }) => {
             return;
         }
 
-        const uri = action === true ? "Activate" : "DeActivate";
+        const uri = action === true ? 'Activate' : 'DeActivate';
         axios
             .post(`/Messaging/${uri}`, { id })
             .then(({ message }) => {
@@ -126,7 +122,7 @@ const ShowMessage = ({ match }) => {
                 // });
 
                 // setMessageList(newMessageList);
-                firstTime()
+                firstTime();
             })
             .catch((errorMessage) => notify.error(errorMessage))
             .then(() => setLoading(false));
@@ -134,7 +130,6 @@ const ShowMessage = ({ match }) => {
 
     const onEditClick = (data) => {
         setSelectedMessageData(data);
-        // console.log(data);
         setIsModalVisible(true);
     };
 
@@ -147,28 +142,28 @@ const ShowMessage = ({ match }) => {
             <Card title={`لیست ${messageType} های ${welfareNameFa}`}>
                 <Spin delay={900} spinning={loading}>
                     <List
-                        itemLayout="vertical"
-                        size="large"
+                        itemLayout='vertical'
+                        size='large'
                         dataSource={messageList}
                         renderItem={({ title, body, isActive, id }) => (
                             <List.Item
                                 key={title}
                                 actions={[
-                                    <div class="list-switch-container">
+                                    <div class='list-switch-container'>
                                         <Switch
-                                            size="small"
-                                            checkedChildren="فعال"
-                                            unCheckedChildren="غیرفعال"
+                                            size='small'
+                                            checkedChildren='فعال'
+                                            unCheckedChildren='غیرفعال'
                                             checked={isActive}
                                             onChange={(e) =>
                                                 onActivityChange(e, id)
                                             }
                                         />
                                     </div>,
-                                    <div className="list-action-left">
+                                    <div className='list-action-left'>
                                         <Button
-                                            type="default"
-                                            size="small"
+                                            type='default'
+                                            size='small'
                                             onClick={() =>
                                                 onEditClick({ id, title, body })
                                             }
@@ -182,13 +177,20 @@ const ShowMessage = ({ match }) => {
                                     title={[
                                         <Badge
                                             dot
-                                            color={isActive ? "green" : "pink"}
-                                            className="list-badge"
+                                            color={isActive ? 'green' : 'pink'}
+                                            className='list-badge'
                                         ></Badge>,
                                         title,
                                     ]}
-                                    className="sm-font"
-                                    description={body}
+                                    className='sm-font'
+                                    description={body
+                                        .split('\n')
+                                        .map((item, idx) => (
+                                            <span key={idx}>
+                                                {item}
+                                                <br />
+                                            </span>
+                                        ))}
                                 />
                             </List.Item>
                         )}
@@ -197,7 +199,7 @@ const ShowMessage = ({ match }) => {
             </Card>
 
             <Modal
-                title="ویرایش"
+                title='ویرایش'
                 footer={null}
                 visible={isModalVisible}
                 onCancel={modalClose}

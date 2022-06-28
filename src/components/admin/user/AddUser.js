@@ -178,8 +178,8 @@ const AddUser = () => {
                             rules={[{ required: true }]}
                         >
                             <Radio.Group>
-                                <Radio.Button value={1}>مرد</Radio.Button>
-                                <Radio.Button value={0}>زن</Radio.Button>
+                                <Radio.Button value={1}>آقا</Radio.Button>
+                                <Radio.Button value={0}>خانم</Radio.Button>
                             </Radio.Group>
                         </Form.Item>
 

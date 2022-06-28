@@ -13,12 +13,15 @@ import {
     Modal,
     Alert,
     Space,
+    Popover,
 } from 'antd';
 import notify from 'general/notify';
 import axios from 'axios';
 import Gallery from './Gallery';
 import { getWelfareName, formatNumber } from 'general/Helper';
 import { Link, Redirect } from 'react-router-dom';
+import LastMessages from 'components/users/dashboard/LastMessages';
+import ShowReserveRule from 'components/users/rule/ShowReserveRule';
 
 const { Option } = Select;
 
@@ -42,8 +45,15 @@ const Reserve = ({ match, history }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [serviceList, setServiceList] = useState([]);
     const [selectedServicesList, setSelectedServicesList] = useState([]);
+    const [ruleContent, setRuleContent] = useState('');
+    const [ruleLoading, setRuleLoading] = useState();
+    const [modalTitle, setModalTitle] = useState('');
     const { url } = match;
     const [form] = Form.useForm();
+
+    const getWelfareType = () => {
+        return url.split('/')[1]?.toUpperCase();
+    };
 
     useEffect(() => {
         setReservableDays([]);
@@ -53,16 +63,15 @@ const Reserve = ({ match, history }) => {
         setSubmitButtonDisabled(true);
         setFinalStep(false);
         setWelfareType(null);
-        setServiceList([])
+        setServiceList([]);
 
         form.resetFields();
-        const type = url.split('/')[1]?.toUpperCase();
 
-        setWelfareType(type);
+        const type = getWelfareType();
+        setWelfareType();
         // get welfareId by url
         axios.post('Welfare/Get', { type }).then(({ data }) => {
             const welfareId = data[0].id;
-
             setWelfareId(welfareId);
             setWelfareName(getWelfareName(welfareId));
 
@@ -70,14 +79,16 @@ const Reserve = ({ match, history }) => {
                 setClusterName('اتاق');
             } else if (welfareId === 4) {
                 setClusterName('میز');
+            } else if (welfareId === 5) {
+                setClusterName('مشاور');
             }
 
             // get last message
-            axios
-                .post('Messaging/GetLast', { welfareId, isPublic: false })
-                .then(({ data }) => {
-                    setMessage(data);
-                });
+            // axios
+            //     .post('Messaging/GetLast', { welfareId, isPublic: false })
+            //     .then(({ data }) => {
+            //         setMessage(data);
+            //     });
             // .then(() => setMessageLoading(false));
             // get reservable days of week
             axios
@@ -95,6 +106,39 @@ const Reserve = ({ match, history }) => {
         });
     }, [url]);
 
+    const openModal = (title, type) => {
+        setModalTitle(title);
+        setWelfareType(type);
+        setIsModalVisible(true);
+    };
+
+    const getRuleContent = () => {
+        setRuleLoading(true);
+        axios
+            .post('Rule/GetLast', {
+                messageType: 'rule',
+                welfareId,
+            })
+            .then(({ data }) => {
+                const content = (
+                    <div style={{ maxWidth: 600 }}>
+                        <h2>{data.title || ''}</h2>
+                        <p>
+                            {data.body.split('\n').map((item, idx) => (
+                                <span key={idx}>
+                                    {item}
+                                    <br />
+                                </span>
+                            ))}
+                        </p>
+                    </div>
+                );
+                setRuleContent(content);
+            })
+            // .catch((errorMessage) => notify.error(errorMessage))
+            .then(() => setRuleLoading(false));
+    };
+
     const closeModal = () => {
         setIsModalVisible(false);
     };
@@ -103,6 +147,15 @@ const Reserve = ({ match, history }) => {
         const selectedDay = e.target.value;
         setSelectedDay(selectedDay);
         setClusterList([]);
+        setReservableTimes([]);
+
+        setFinalStep(false);
+        setSubmitButtonDisabled(true);
+
+        form.setFieldsValue({
+            programId: null,
+            rule: false,
+        });
 
         setTimesLoading(true);
         // get scences
@@ -117,6 +170,7 @@ const Reserve = ({ match, history }) => {
                 } else {
                     setReservableTimes(data);
                 }
+                document.getElementById('time-place').scrollIntoView();
             })
             .catch((errorMessage) => {
                 notify.error(errorMessage);
@@ -124,22 +178,14 @@ const Reserve = ({ match, history }) => {
             .then(() => setTimesLoading(false));
     }
 
-    // const onClusterChange = (e) => {
-    //     const selectedTime = e.target.value;
-    //     alert(selectedTime);
-    //     // const capacity = clusterList.find()
-    //     setFinalStep(true);
-    //     setSelectedTime(selectedTime);
-    //     // setSubmitButtonDisabled(false);
-    // };
-
     const onClusterChange = (e) => {
-        if (welfareId === 2) {
+        if (welfareId === 2 || welfareId === 4 || welfareId === 5) {
             const selectedClusterId = e.target.value;
             const selectedItem = clusterList.find(
                 (item) => item?.welfareclusterId === selectedClusterId
             );
 
+            console.log(selectedItem);
             setCompanionCountList([
                 ...Array(parseInt(selectedItem?.clusterCapacity)).keys(),
             ]);
@@ -153,7 +199,7 @@ const Reserve = ({ match, history }) => {
         setSelectedTime(selectedTime);
 
         setClusterLoading(true);
-        if (welfareId === 4 || welfareId === 2) {
+        if (welfareId === 4 || welfareId === 2 || welfareId === 5) {
             if (welfareId === 4) {
                 setCompanionCountList([0, 1, 2]);
             }
@@ -169,6 +215,9 @@ const Reserve = ({ match, history }) => {
                         notify.error('موردی برای رزرو یافت نشد');
                     } else {
                         setClusterList(data);
+                        document
+                            .getElementById('cluster-place')
+                            .scrollIntoView();
                         // setSubmitButtonDisabled(true);
                     }
                 })
@@ -184,6 +233,7 @@ const Reserve = ({ match, history }) => {
                 .post('WelfareServices/Get', { welfareId })
                 .then(({ data }) => {
                     setServiceList(data);
+                    document.getElementById('service-place').scrollIntoView();
                 })
                 .catch((errorMessage) => notify.error(errorMessage));
             // .then(() => setLoading(false));
@@ -195,7 +245,7 @@ const Reserve = ({ match, history }) => {
         delete values.rule;
 
         if (!values.servicesId) {
-            values.servicesId = []
+            values.servicesId = [];
         }
 
         axios
@@ -228,30 +278,36 @@ const Reserve = ({ match, history }) => {
 
     return (
         <Col sm={24} xs={24} md={22} lg={19} xlg={12}>
-            {message && (
+            <LastMessages public={false} welfareId={welfareId} />
+            <ShowReserveRule welfareId={welfareId} />
+            <br />
+            {/* {message && (
                 <>
                     <br />
                     <Alert
-                        className="message-alert"
+                        className='message-alert'
                         message={message.title}
                         description={message.body}
-                        type="info"
+                        type='info'
                         showIcon
                         closable
                     />
                 </>
-            )}
+            )} */}
             <Card
                 title={`رزرواسیون ${welfareName}`}
                 extra={[
                     // welfareId === 4 && (
                     <Button
-                        size="small"
-                        onClick={() => setIsModalVisible(true)}
+                        size='small'
+                        onClick={() =>
+                            openModal(
+                                welfareId === 4 ? 'مشاهده منو' : 'مشاهده آلبوم',
+                                getWelfareType()
+                            )
+                        }
                     >
-                        {welfareId === 4
-                            ? 'مشاهده منو و آلبوم'
-                            : 'مشاهده آلبوم'}
+                        {welfareId === 4 ? 'مشاهده منو' : 'مشاهده آلبوم'}
                     </Button>,
                     // ),
                 ]}
@@ -260,14 +316,14 @@ const Reserve = ({ match, history }) => {
                 <Form onFinish={onFinish} form={form}>
                     {/* <Alert message="" type="info" /> */}
                     <Badge.Ribbon
-                        text="انتخاب روز"
-                        className="ribbon"
-                        placement="start"
-                        color="cyan"
+                        text='انتخاب روز'
+                        className='ribbon'
+                        placement='start'
+                        color='cyan'
                     ></Badge.Ribbon>
-                    <div className="days-section">
+                    <div className='labels-section'>
                         <Spin delay={900} spinning={daysLoading}>
-                            <Form.Item name="day" label="">
+                            <Form.Item name='day' label=''>
                                 <Radio.Group onChange={onDayChange}>
                                     {reservableDays.map(
                                         ({
@@ -280,7 +336,7 @@ const Reserve = ({ match, history }) => {
                                                     value={shamsiDate}
                                                     disabled={!reserved}
                                                 >
-                                                    <span className="day-of-week">
+                                                    <span className='day-of-week'>
                                                         {dayOfWeek}
                                                         <br />
                                                         <br />
@@ -296,20 +352,20 @@ const Reserve = ({ match, history }) => {
                             </Form.Item>
                         </Spin>
                     </div>
-                    <br />
+                    <br id='time-place' />
                     {reservableTimes.length ? (
                         <>
                             <br />
                             <Badge.Ribbon
-                                text="انتخاب سانس"
-                                className="ribbon"
-                                placement="start"
-                                color="cyan"
+                                text='انتخاب سانس'
+                                className='ribbon'
+                                placement='start'
+                                color='cyan'
                             ></Badge.Ribbon>
-                            <div className="days-section">
+                            <div className='labels-section'>
                                 <Form.Item
-                                    name="programId"
-                                    label=""
+                                    name='programId'
+                                    label=''
                                     rules={[{ required: true }]}
                                 >
                                     <Spin delay={900} spinning={timesLoading}>
@@ -350,16 +406,16 @@ const Reserve = ({ match, history }) => {
                                                                 })`,
                                                             }}
                                                         >
-                                                            <span className="day-of-week">
+                                                            <span className='day-of-week'>
                                                                 سانس
                                                                 {`   ${++i}`}
                                                             </span>
                                                             <br />
-                                                            <span className="day-of-week">
+                                                            <span className='day-of-week'>
                                                                 {`${endTime} - ${startTime}`}
                                                                 <br />
                                                             </span>
-                                                            <span className="detail">
+                                                            <span className='detail'>
                                                                 {welfareId !==
                                                                     2 && [
                                                                     `گنجایش: ${capacity}`,
@@ -386,17 +442,17 @@ const Reserve = ({ match, history }) => {
                             </div>
                         </>
                     ) : null}
-                    <br />
+                    <br id='service-place' />
                     {serviceList.length ? (
                         <>
                             <br />
                             <Badge.Ribbon
-                                text="انتخاب سرویس"
-                                className="ribbon"
-                                placement="start"
-                                color="cyan"
+                                text='انتخاب سرویس'
+                                className='ribbon'
+                                placement='start'
+                                color='cyan'
                             ></Badge.Ribbon>
-                            <Form.Item name="servicesId" label="">
+                            <Form.Item name='servicesId' label=''>
                                 <Checkbox.Group
                                     onChange={isEmptySelectedServices}
                                 >
@@ -405,14 +461,14 @@ const Reserve = ({ match, history }) => {
                                             <Checkbox value={service.id}>
                                                 <Space>
                                                     {service.serviceName}
-                                                    <span className="small-divider">
+                                                    <span className='small-divider'>
                                                         (
                                                         {formatNumber(
                                                             service.price
                                                         )}{' '}
                                                         تومان)
                                                     </span>
-                                                    <span className="small-divider">
+                                                    <span className='small-divider'>
                                                         {service.comment}
                                                     </span>
                                                 </Space>
@@ -424,72 +480,100 @@ const Reserve = ({ match, history }) => {
                             </Form.Item>
                         </>
                     ) : null}
-                    <br />
+                    <br id='cluster-place' />
                     {clusterList.length ? (
                         <>
                             <br />
                             <Badge.Ribbon
                                 // text={() => "انتخاب "+ clusterName}
                                 text={'انتخاب ' + clusterName}
-                                className="ribbon"
-                                placement="start"
-                                color="cyan"
-                            ></Badge.Ribbon>
-                            <div className="days-section">
-                                <Form.Item
-                                    name="welfareClusterId"
-                                    label=""
-                                    rules={[{ required: true }]}
-                                >
-                                    <Spin delay={900} spinning={clusterLoading}>
-                                        <Radio.Group onChange={onClusterChange}>
-                                            {clusterList.map(
-                                                (
-                                                    {
-                                                        clusterCapacity,
-                                                        clusterFa,
-                                                        welfareclusterId,
-                                                        clusterLock,
-                                                    },
-                                                    i
-                                                ) => {
-                                                    return (
-                                                        <Radio.Button
-                                                            value={
-                                                                welfareclusterId
-                                                            }
-                                                            disabled={
-                                                                clusterLock
-                                                            }
-                                                        >
-                                                            <span className="day-of-week">
-                                                                {clusterFa}
-                                                                <span className="detail">
-                                                                    {`گنجایش: ${clusterCapacity}`}
+                                className='ribbon'
+                                placement='start'
+                                color='cyan'
+                            >
+                                {welfareId === 4 ? (
+                                    <Button
+                                        size='small'
+                                        onClick={() =>
+                                            openModal(
+                                                'مشاهده چیدمان',
+                                                'CAFE-PLAN'
+                                            )
+                                        }
+                                        style={{
+                                            margin: '15px 0',
+                                            zIndex: 99,
+                                            float: 'left',
+                                        }}
+                                    >
+                                        مشاهده چیدمان
+                                    </Button>
+                                ) : (
+                                    ''
+                                )}
+                            </Badge.Ribbon>
+                            <div className='labels-section cluster'>
+                                <div>
+                                    <Form.Item
+                                        name='welfareClusterId'
+                                        label=''
+                                        rules={[{ required: true }]}
+                                    >
+                                        <Spin
+                                            delay={900}
+                                            spinning={clusterLoading}
+                                        >
+                                            <Radio.Group
+                                                onChange={onClusterChange}
+                                            >
+                                                {clusterList.map(
+                                                    (
+                                                        {
+                                                            clusterCapacity,
+                                                            clusterFa,
+                                                            welfareclusterId,
+                                                            clusterLock,
+                                                        },
+                                                        i
+                                                    ) => {
+                                                        return (
+                                                            <Radio.Button
+                                                                value={
+                                                                    welfareclusterId
+                                                                }
+                                                                disabled={
+                                                                    clusterLock
+                                                                }
+                                                            >
+                                                                <span className='day-of-week'>
+                                                                    {clusterFa}
+                                                                    <span className='detail'>
+                                                                        {`گنجایش: ${clusterCapacity}`}
+                                                                    </span>
                                                                 </span>
-                                                            </span>
-                                                            <br />
-                                                        </Radio.Button>
-                                                    );
-                                                }
-                                            )}
-                                        </Radio.Group>
-                                    </Spin>
-                                </Form.Item>
+                                                                <br />
+                                                            </Radio.Button>
+                                                        );
+                                                    }
+                                                )}
+                                            </Radio.Group>
+                                        </Spin>
+                                    </Form.Item>
+                                </div>
                             </div>
                         </>
                     ) : null}
 
                     {finalStep ? (
                         <>
-                            <Divider orientation="right" className="sm-font">
+                            <Divider orientation='right' className='sm-font'>
                                 قسمت پایانی
                             </Divider>
-                            <div className="days-section">
+                            <div className='labels-section'>
                                 {(welfareId === 2 || welfareId === 4) && (
                                     <Form.Item
-                                        name="companions"
-                                        label="تعداد همراه"
+                                        name='companions'
+                                        label='تعداد همراه'
                                         wrapperCol={{ xs: 24, lg: 5 }}
                                         rules={[{ required: true }]}
                                     >
@@ -503,21 +587,37 @@ const Reserve = ({ match, history }) => {
                                     </Form.Item>
                                 )}
                                 <Form.Item
-                                    name="rule"
+                                    name='rule'
                                     label={
                                         <>
-                                            <Link
+                                            <Popover
+                                                // title='Are you sure to delete this task?'
+                                                // onConfirm={confirm}
+                                                // onCancel={cancel}
+                                                onClick={getRuleContent}
+                                                trigger='click'
+                                                content={
+                                                    <Spin
+                                                        spinning={ruleLoading}
+                                                    >
+                                                        {ruleContent}
+                                                    </Spin>
+                                                }
+                                            >
+                                                <a>
+                                                    شرایط {welfareName} &nbsp;
+                                                </a>
+                                            </Popover>
+                                            {/* <a
                                                 to={url.replace(
                                                     'reservation',
                                                     'rule'
                                                 )}
-                                            >
-                                                شرایط {welfareName} &nbsp;
-                                            </Link>
+                                            > */}
                                             را میپذیرم
                                         </>
                                     }
-                                    valuePropName="checked"
+                                    valuePropName='checked'
                                 >
                                     <Checkbox
                                         onChange={onRuleAcceptanceChange}
@@ -527,12 +627,12 @@ const Reserve = ({ match, history }) => {
                         </>
                     ) : null}
 
-                    <div className="ant-card-footer">
+                    <div className='ant-card-footer'>
                         <Form.Item>
                             <Button
-                                type="primary"
-                                htmlType="submit"
-                                className="wide-button"
+                                type='primary'
+                                htmlType='submit'
+                                className='wide-button'
                                 disabled={submitButtonDisabled}
                             >
                                 ثبت
@@ -542,12 +642,13 @@ const Reserve = ({ match, history }) => {
                 </Form>
             </Card>
             <Modal
-                title={welfareId === 4 ? 'مشاهده منو و آلبوم' : 'مشاهده آلبوم'}
+                title={modalTitle}
                 visible={isModalVisible}
                 footer={null}
                 onCancel={closeModal}
                 width={1000}
                 style={{ top: 30 }}
+                destroyOnClose={true}
             >
                 <Gallery type={welfareType} />
             </Modal>

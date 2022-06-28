@@ -40,6 +40,8 @@ const ShowReservationReport = () => {
     const [formOutput, setFormOutput] = useState({});
     const [reservationId, setReservationId] = useState(null);
     const [isServicesModalVisible, setIsServicesModalVisible] = useState(false);
+    const [columns, setColumns] = useState([]);
+    const [basicColums, setBasicColums] = useState()
     const [form] = Form.useForm();
 
     useEffect(() => {
@@ -53,70 +55,47 @@ const ShowReservationReport = () => {
                 setWorkGroupList(res[1].data);
                 setFilterPartloading(false);
             });
-    }, []);
 
-    const columns = [
-        {
-            title: 'نام',
-            dataIndex: 'namefa',
-            key: 'namefa',
-        },
-        {
-            title: 'کد کارمندی',
-            dataIndex: 'personelCode',
-            key: 'personelCode',
-        },
-        {
-            title: 'شماره همراه',
-            dataIndex: 'mobile',
-            key: 'mobile',
-        },
-        {
-            title: 'بخش',
-            dataIndex: 'welfarenamefa',
-            key: 'welfarenamefa',
-        },
-        {
-            title: 'تاریخ',
-            dataIndex: 'dailyProgramShamsiDate',
-            key: 'dailyProgramShamsiDate',
-        },
-        {
-            title: 'زمان سانس',
-            key: 'startTime',
-            render: ({ startTime, endTime }) => `${endTime} - ${startTime}`,
-        },
-        {
-            title: 'وضعیت',
-            dataIndex: 'statusReserve',
-            key: 'statusReserve',
-        },
-        {
-            title: 'وی آی پی',
-            key: 'isVip',
-            className: 'edit',
-            render: (record) =>
-                record.isVip ? (
-                    <CheckOutlined className="green" />
-                ) : (
-                    <CloseOutlined className="red" />
-                ),
-        },
-        {
-            title: 'سرویس ها',
-            onCell: ({ reservationId }) => {
-                return {
-                    onClick: () => {
-                        setReservationId(reservationId);
-                        setIsServicesModalVisible(true);
-                    },
-                };
+        const columnsArray = [
+            {
+                title: 'نام',
+                dataIndex: 'namefa',
+                key: 'namefa',
             },
-            key: 'reservationId',
-            className: 'act-icon edit',
-            render: () => <PicRightOutlined style={{ fontSize: 18 }} />,
-        },
-    ];
+            {
+                title: 'کد کارمندی',
+                dataIndex: 'personelCode',
+                key: 'personelCode',
+            },
+            {
+                title: 'شماره همراه',
+                dataIndex: 'mobile',
+                key: 'mobile',
+            },
+            {
+                title: 'بخش',
+                dataIndex: 'welfarenamefa',
+                key: 'welfarenamefa',
+            },
+            {
+                title: 'تاریخ',
+                dataIndex: 'dailyProgramShamsiDate',
+                key: 'dailyProgramShamsiDate',
+            },
+            {
+                title: 'زمان سانس',
+                key: 'startTime',
+                render: ({ startTime, endTime }) => `${endTime} - ${startTime}`,
+            },
+            {
+                title: 'وضعیت',
+                dataIndex: 'statusReserve',
+                key: 'statusReserve',
+            },
+        ];
+
+        setBasicColums(columnsArray)
+    }, []);
 
     const {
         pageIndex,
@@ -142,6 +121,57 @@ const ShowReservationReport = () => {
         setFormOutput(values);
 
         setTableLoading(true);
+
+        const { welfareId } = values;
+
+        let newColumns = [...basicColums];
+
+        if (welfareId !== 5 || welfareId === 0) {
+            newColumns.splice(newColumns.length, 0, {
+                title: 'وی آی پی',
+                key: 'isVip',
+                className: 'edit',
+                render: (record) =>
+                    record.isVip ? (
+                        <CheckOutlined className='green' />
+                    ) : (
+                        <CloseOutlined className='red' />
+                    ),
+            });
+        }
+
+        if (welfareId === 3 || welfareId === 0) {
+            newColumns.splice(newColumns.length, 0, {
+                title: 'سرویس ها',
+                onCell: ({ reservationId }) => {
+                    return {
+                        onClick: () => {
+                            setReservationId(reservationId);
+                            setIsServicesModalVisible(true);
+                        },
+                    };
+                },
+                key: 'reservationId',
+                className: 'act-icon edit',
+                render: () => <PicRightOutlined style={{ fontSize: 18 }} />,
+            });
+        } else if (welfareId === 4 || welfareId === 2 || welfareId === 0) {
+            newColumns.splice(4, 0, {
+                title: 'تعداد همراه',
+                key: 'reservationId',
+                dataIndex: 'companions',
+            });
+
+            newColumns.splice(4, 0, {
+                title: welfareId === 4 ? 'عنوان میز' : 'عنوان اتاق',
+                key: 'reservationId',
+                dataIndex: 'welfareClusterNameFa',
+            });
+        }
+
+        
+
+        setColumns(newColumns)
 
         axios
             .post('Report/Reservation', values)
@@ -214,12 +244,12 @@ const ShowReservationReport = () => {
                         <Row gutter={18}>
                             <Col lg={7} md={12} xs={24}>
                                 <Form.Item
-                                    name="dateFrom"
-                                    label="از تاریخ"
+                                    name='dateFrom'
+                                    label='از تاریخ'
                                     rules={[{ required: true }]}
                                 >
                                     <DatePicker
-                                        format="YYYY/MM/DD"
+                                        format='YYYY/MM/DD'
                                         calendar={persian}
                                         locale={persian_fa}
                                         weekDays={weekDays}
@@ -227,12 +257,12 @@ const ShowReservationReport = () => {
                                 </Form.Item>
 
                                 <Form.Item
-                                    name="dateTo"
-                                    label="تا تاریخ"
+                                    name='dateTo'
+                                    label='تا تاریخ'
                                     // rules={[{ required: true }]}
                                 >
                                     <DatePicker
-                                        format="YYYY/MM/DD"
+                                        format='YYYY/MM/DD'
                                         calendar={persian}
                                         locale={persian_fa}
                                         weekDays={weekDays}
@@ -241,7 +271,7 @@ const ShowReservationReport = () => {
                             </Col>
 
                             <Col lg={8} md={12} xs={24}>
-                                <Form.Item name="welfareId" label="بخش">
+                                <Form.Item name='welfareId' label='بخش'>
                                     <Select>
                                         <Option value={0}>همه</Option>
                                         {welfareList.map(({ id, typename }) => (
@@ -253,8 +283,8 @@ const ShowReservationReport = () => {
                                 </Form.Item>
 
                                 <Form.Item
-                                    name="presenceStatus"
-                                    label="وضعیت"
+                                    name='presenceStatus'
+                                    label='وضعیت'
                                     // rules={[{ required: true }]}
                                 >
                                     <Select>
@@ -276,7 +306,7 @@ const ShowReservationReport = () => {
                                 </Form.Item>
                             </Col>
                             <Col lg={{ span: 8, offset: 1 }} md={12} xs={24}>
-                                <Form.Item name="workgroupId" label="کارگروه">
+                                <Form.Item name='workgroupId' label='کارگروه'>
                                     <Select>
                                         <Option value={0}>همه</Option>
                                         {workGroupList.map(({ id, nameFa }) => (
@@ -292,9 +322,9 @@ const ShowReservationReport = () => {
                                     }}
                                 >
                                     <Button
-                                        type="primary"
-                                        htmlType="submit"
-                                        className="wide-button float-left"
+                                        type='primary'
+                                        htmlType='submit'
+                                        className='wide-button float-left'
                                         block
                                     >
                                         مشاهده
@@ -307,9 +337,9 @@ const ShowReservationReport = () => {
             </Card>
             {isFirstRequestSent && (
                 <Card
-                    title="مشاهده گزارش"
+                    title='مشاهده گزارش'
                     extra={[
-                        <Button size="small" onClick={downloadReport}>
+                        <Button size='small' onClick={downloadReport}>
                             خروجی اکسل
                         </Button>,
                     ]}
@@ -325,7 +355,7 @@ const ShowReservationReport = () => {
                 </Card>
             )}
             <Modal
-                title="مشاهده سرویس ها"
+                title='مشاهده سرویس ها'
                 visible={isServicesModalVisible}
                 footer={null}
                 destroyOnClose={true}

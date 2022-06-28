@@ -5,6 +5,7 @@ import axios from 'axios';
 import { RedoOutlined } from '@ant-design/icons';
 import { useCookies } from 'react-cookie';
 import notify from 'general/notify';
+import { englishWordAndNumbers } from "general/Helper";
 
 const Login = () => {
     const [loading, setLoading] = useState(false);
@@ -53,41 +54,44 @@ const Login = () => {
     };
 
     return (
-        <div className="main">
+        <div className='main'>
             <Row>
                 <Col xs={24} md={15}>
-                    <Row justify="center" align="middle" className="login-cols">
-                        <Col className="form">
-                            <div className="login-logo">
+                    <Row justify='center' align='middle' className='login-cols'>
+                        <Col className='form'>
+                            <div className='login-logo'>
                                 <img src={logo} />
                             </div>
                             <h1>سامانه نوبت دهی همراه اول</h1>
                             <br />
                             <Spin delay={900} spinning={loading}>
                                 <Form
-                                    name="basic"
+                                    name='basic'
                                     labelCol={{ sm: 8, md: 7, lg: 6 }}
-                                    autoComplete="off"
-                                    validateTrigger="onSubmit"
+                                    autoComplete='off'
+                                    validateTrigger='onSubmit'
                                     onFinish={onFinish}
                                 >
                                     <Form.Item
-                                        label="نام کاربری"
-                                        name="Username"
+                                        label='نام کاربری'
+                                        name='Username'
                                         rules={[{ required: true }]}
+                                        normalize={(val) => englishWordAndNumbers(val)}
                                     >
                                         <Input
-                                            size="large"
-                                            className="ltr-left"
+                                            size='large'
+                                            className='ltr-left'
+                                            placeholder='کد کارمندی'
                                         />
                                     </Form.Item>
 
                                     <Form.Item
-                                        label="رمز عبور"
-                                        name="Password"
+                                        label='رمز عبور'
+                                        name='Password'
                                         rules={[{ required: true }]}
+                                        normalize={(val) => englishWordAndNumbers(val)}
                                     >
-                                        <Input.Password className="ltr" />
+                                        <Input.Password className='ltr'/>
                                     </Form.Item>
                                     {/* <Col xs={{ span: 24, offset: 0 }} sm={{ span: 16, offset: 8 }} md={{ span: 18, offset: 7 }} lg={{ span: 18, offset: 6 }}>
                                         <div className="captcha-wrapper">
@@ -116,9 +120,9 @@ const Login = () => {
                                     <center>
                                         <Form.Item>
                                             <Button
-                                                type="primary"
-                                                htmlType="submit"
-                                                className="wider-button"
+                                                type='primary'
+                                                htmlType='submit'
+                                                className='wider-button'
                                             >
                                                 ورود
                                             </Button>
@@ -129,17 +133,17 @@ const Login = () => {
                         </Col>
                     </Row>
                 </Col>
-                <Col xs={0} md={9} className="login-cols">
+                <Col xs={0} md={9} className='login-cols'>
                     <Carousel
-                        dotPosition="left"
+                        dotPosition='left'
                         autoplay
                         speed={1000}
                         slidesToShow={1}
                         autoplaySpeed={4000}
                     >
-                        <div className="bg1 login-image"></div>
-                        <div className="bg2 login-image"></div>
-                        <div className="bg3 login-image"></div>
+                        <div className='bg1 login-image'></div>
+                        <div className='bg2 login-image'></div>
+                        <div className='bg3 login-image'></div>
                     </Carousel>
                 </Col>
             </Row>

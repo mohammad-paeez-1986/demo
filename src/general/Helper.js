@@ -83,6 +83,8 @@ export const getWelfareName = (welfareId) => {
             return 'کارواش';
         case 4:
             return 'کافه';
+        case 5:
+            return 'کلینیک';
         default:
             return 'عمومی';
     }
@@ -90,4 +92,9 @@ export const getWelfareName = (welfareId) => {
 
 export const formatNumber = (number) => {
     return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+};
+
+export const englishWordAndNumbers = (text) => {
+    // https://stackoverflow.com/a/12090265/9600858
+    return text.replace(/[^=+~.()a-zA-Z0-9!@#$%^&*_-]/, '');
 };

@@ -27,7 +27,7 @@ const AdminProfile = ({ userId }) => {
                 setUserData(userData);
                 setLoading(false);
 
-                // console.log(userData);
+               
                 // initialize form
                 const {
                     genderId,
@@ -98,8 +98,8 @@ const AdminProfile = ({ userId }) => {
 
                         <Form.Item name="genderId" label="جنسیت">
                             <Radio.Group disabled>
-                                <Radio.Button value={1}>مرد</Radio.Button>
-                                <Radio.Button value={2}>زن</Radio.Button>
+                                <Radio.Button value={1}>آقا</Radio.Button>
+                                <Radio.Button value={2}>خانم</Radio.Button>
                             </Radio.Group>
                         </Form.Item>
 

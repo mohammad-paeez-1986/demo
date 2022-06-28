@@ -1,17 +1,17 @@
-import React, { useState, useEffect } from "react";
-import LastMessages from "./LastMessages";
-import LastReservations from "./LastReservations";
-import ReservationLinks from "./ReservationLinks";
+import React, { useState, useEffect } from 'react';
+import LastMessages from './LastMessages';
+import LastReservations from './LastReservations';
+import ReservationLinks from './ReservationLinks';
 import Banner from './Banners';
 
-const UserDashboard = () => {
+const UserDashboard = ({roleName}) => {
     return (
         <>
-            <LastMessages />
-            <br/>
+            <LastMessages isPublic={true} />
+            <br />
             <Banner />
             <br />
-            <ReservationLinks />
+            <ReservationLinks roleName={roleName}/>
             <br />
             <LastReservations />
         </>

@@ -121,7 +121,7 @@ const ShowReservationHistory = ({ match }) => {
                 return (
                     <Select
                         style={{ width: 130 }}
-                        defaultValue={presenceStatus}
+                        value={presenceStatus}
                         onChange={(id) =>
                             onReservationStatusChange(id, reservationId)
                         }

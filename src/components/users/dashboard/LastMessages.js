@@ -1,20 +1,33 @@
-import React, { useState, useEffect } from "react";
-import { Card, Col, List, Spin, Alert } from "antd";
-import axios from "axios";
-import { getWelfareName } from "general/Helper";
+import React, { useState, useEffect } from 'react';
+import { Card, Col, List, Spin, Alert } from 'antd';
+import axios from 'axios';
+import { getWelfareName } from 'general/Helper';
 
-const LastMessages = () => {
-    const [lastPublicMessage, setLastPublicMessage] = useState([]);
+const LastMessages = ({ isPublic, welfareId }) => {
+    const [lastPublicMessage, setLastPublicMessage] = useState(null);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
+        const postData = isPublic
+            ? { isPublic: true }
+            : { isPublic: false, welfareId };
+
         axios
-            .post("Messaging/GetLast", { isPublic: true })
+            .post('Messaging/GetLast', postData)
             .then(({ data }) => {
-                setLastPublicMessage(data);
+                if (data) {
+                    data.body = data.body.split('\n').map((item, idx) => (
+                        <span key={idx}>
+                            {item}
+                            <br />
+                        </span>
+                    ));
+                    // console.log(data);
+                    setLastPublicMessage(data);
+                }
             })
             .then(() => setLoading(false));
-    }, []);
+    }, [welfareId]);
 
     return (
         <Col sm={24} xs={24} md={24} lg={24} xlg={12}>
@@ -23,10 +36,10 @@ const LastMessages = () => {
                 <>
                     <br />
                     <Alert
-                        className="message-alert"
+                        className='message-alert'
                         message={lastPublicMessage.title}
                         description={lastPublicMessage.body}
-                        type="info"
+                        type='info'
                         showIcon
                         closable
                     />
@@ -37,4 +50,4 @@ const LastMessages = () => {
     );
 };
 
-export default LastMessages;
+export default React.memo(LastMessages);
