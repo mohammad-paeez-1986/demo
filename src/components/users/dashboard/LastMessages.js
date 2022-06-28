@@ -39,7 +39,7 @@ const LastMessages = ({ isPublic, welfareId }) => {
                         className='message-alert'
                         message={lastPublicMessage.title}
                         description={lastPublicMessage.body}
-                        type='info'
+                        type='error'
                         showIcon
                         closable
                     />
